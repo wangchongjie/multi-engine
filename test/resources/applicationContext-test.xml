@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans   
+        http://www.springframework.org/schema/beans/spring-beans-3.0.xsd   
+        http://www.springframework.org/schema/context   
+        http://www.springframework.org/schema/context/spring-context-3.0.xsd   
+        ">
+
+    <!-- ========================= Spring basic configurations ========================= -->
+
+    <context:component-scan base-package="com.baidu.unbiz"/>
+
+    <!-- 显式配置线程执行环境，可选择性覆盖 -->
+    <!--
+    <bean name="xmlThreadPoolConfig" class="com.baidu.unbiz.multienginene.constants.XmlThreadPoolConfig">
+        <property name="coreTaskNum" value="12"/>
+        <property name="maxTaskNum" value="22"/>
+        <property name="maxCacheTaskNum" value="4"/>
+        <property name="queueFullSleepTime" value="10"/>
+        <property name="taskTimeoutMillSeconds" value="5000"/>
+    </bean>
+
+    <bean name="simpleParallelExePool" class="com.baidu.unbiz.multienginene.task.SimpleParallelExePool">
+        <constructor-arg ref="xmlThreadPoolConfig"/>
+    </bean>
+    -->
+
+</beans>
