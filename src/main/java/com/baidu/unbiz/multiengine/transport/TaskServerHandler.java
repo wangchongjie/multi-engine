@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import com.baidu.unbiz.multiengine.codec.Codec;
 import com.baidu.unbiz.multiengine.codec.impl.ProtostuffCodec;
+import com.baidu.unbiz.multiengine.dto.RpcResult;
 import com.baidu.unbiz.multiengine.dto.TaskCommand;
 import com.baidu.unbiz.multitask.common.TaskPair;
 import com.baidu.unbiz.multitask.task.ParallelExePool;
@@ -73,11 +74,13 @@ public class TaskServerHandler extends ChannelInboundHandlerAdapter implements A
             LOG.info("channel read task:" + command);
 
             ParallelExePool parallelExePool = getParallelExePool();
-            MultiResult result = parallelExePool.submit(new TaskPair(command.getTaskBean(), command.getParams()));
-            List<DeviceViewItem> response = result.getResult(command.getTaskBean());
+            MultiResult results = parallelExePool.submit(new TaskPair(command.getTaskBean(), command.getParams()));
+            List<DeviceViewItem> response = results.getResult(command.getTaskBean());
+
+            RpcResult result = RpcResult.newInstance().setResult(response);
 
             buf.clear();
-            buf.writeBytes(codec.encode(List.class, response));
+            buf.writeBytes(codec.encode(RpcResult.class, result));
             ctx.writeAndFlush(buf);
         }
 

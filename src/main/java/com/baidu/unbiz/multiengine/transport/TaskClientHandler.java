@@ -12,6 +12,7 @@ import org.apache.commons.logging.LogFactory;
 import com.baidu.unbiz.multiengine.codec.Codec;
 import com.baidu.unbiz.multiengine.codec.impl.ProtobufCodec;
 import com.baidu.unbiz.multiengine.codec.impl.ProtostuffCodec;
+import com.baidu.unbiz.multiengine.dto.RpcResult;
 import com.baidu.unbiz.multiengine.dto.TaskCommand;
 import com.baidu.unbiz.multitask.task.Params;
 
@@ -62,8 +63,8 @@ public class TaskClientHandler extends ChannelInboundHandlerAdapter {
             ByteBuf buf = (ByteBuf) msg;
             byte[] bytes = new byte[buf.readableBytes()];
             buf.readBytes(bytes);
-            List<DeviceViewItem> result = codec.decode(List.class, bytes);
-            LOG.info("client channel read task:" + result);
+            RpcResult result = codec.decode(RpcResult.class, bytes);
+            LOG.info("client channel read task:" + result.getResult());
         }
 
 //        ByteBuf in = (ByteBuf) msg;

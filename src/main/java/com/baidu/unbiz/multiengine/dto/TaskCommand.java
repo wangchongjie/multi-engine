@@ -7,15 +7,15 @@ import com.baidu.unbiz.multitask.task.Params;
  */
 public class TaskCommand {
 
-    private Params params;
+    private Object params;
 
     private String taskBean;
 
-    public Params getParams() {
+    public Object getParams() {
         return params;
     }
 
-    public void setParams(Params params) {
+    public void setParams(Object params) {
         this.params = params;
     }
 
@@ -26,4 +26,5 @@ public class TaskCommand {
     public void setTaskBean(String taskBean) {
         this.taskBean = taskBean;
     }
+
 }
