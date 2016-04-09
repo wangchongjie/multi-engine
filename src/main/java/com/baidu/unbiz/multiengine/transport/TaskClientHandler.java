@@ -1,26 +1,21 @@
 package com.baidu.unbiz.multiengine.transport;
 
 /**
- * Created by baidu on 16/3/31.
+ * Created by wangchongjie on 16/3/31.
  */
-
-import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.baidu.unbiz.multiengine.codec.Codec;
-import com.baidu.unbiz.multiengine.codec.impl.ProtobufCodec;
 import com.baidu.unbiz.multiengine.codec.impl.ProtostuffCodec;
 import com.baidu.unbiz.multiengine.dto.RpcResult;
 import com.baidu.unbiz.multiengine.dto.TaskCommand;
-import com.baidu.unbiz.multitask.task.Params;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.netty.util.ReferenceCountUtil;
 
 /**
  * 24   * Handler implementation for the echo client.  It initiates the ping-pong
@@ -67,15 +62,15 @@ public class TaskClientHandler extends ChannelInboundHandlerAdapter {
             LOG.info("client channel read task:" + result.getResult());
         }
 
-//        ByteBuf in = (ByteBuf) msg;
-//        try {
-//            while (in.isReadable()) { // (1)
-//                System.out.print((char) in.readByte());
-//                System.out.flush();
-//            }
-//        } finally {
-//            ReferenceCountUtil.release(msg); // (2)
-//        }
+        //        ByteBuf in = (ByteBuf) msg;
+        //        try {
+        //            while (in.isReadable()) { // (1)
+        //                System.out.print((char) in.readByte());
+        //                System.out.flush();
+        //            }
+        //        } finally {
+        //            ReferenceCountUtil.release(msg); // (2)
+        //        }
     }
 
     @Override
