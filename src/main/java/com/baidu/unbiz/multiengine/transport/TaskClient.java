@@ -1,9 +1,16 @@
 package com.baidu.unbiz.multiengine.transport;
 
+import java.util.concurrent.ConcurrentHashMap;
+
+import com.baidu.unbiz.multiengine.codec.Codec;
+import com.baidu.unbiz.multiengine.codec.impl.ProtostuffCodec;
+import com.baidu.unbiz.multiengine.dto.TaskCommand;
 import com.baidu.unbiz.multiengine.tmp.Endpoint;
 import com.baidu.unbiz.multiengine.tmp.EndpointUtil;
 
 import io.netty.bootstrap.Bootstrap;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -30,6 +37,8 @@ public final class TaskClient {
     static final String HOST = System.getProperty("host", "127.0.0.1");
     static final int PORT = Integer.parseInt(System.getProperty("port", "8007"));
     static final int SIZE = Integer.parseInt(System.getProperty("size", "256"));
+
+    private static ConcurrentHashMap<String, Channel> sessionChannelMap = new ConcurrentHashMap<String, Channel>();
 
     public static void main(String[] args) throws Exception {
         // Configure SSL.git
@@ -63,12 +72,29 @@ public final class TaskClient {
             // Start the client.
             ChannelFuture f = b.connect(HOST, PORT).sync();
 
+            sessionChannelMap.put("test", f.channel());
+            mockCall();
+
             // Wait until the connection is closed.
             f.channel().closeFuture().sync();
         } finally {
             // Shut down the event loop to terminate all threads.
             group.shutdownGracefully();
         }
+    }
+
+    public static void mockCall() {
+        TaskCommand command = new TaskCommand();
+        command.setTaskBean("deviceStatFetcher");
+        command.setParams(null);
+
+        ByteBuf buf = Unpooled.buffer(TaskClient.SIZE);
+
+        Codec codec = new ProtostuffCodec();
+        buf.writeBytes(codec.encode(TaskCommand.class, command));
+
+        Channel channel = sessionChannelMap.get("test");
+        channel.writeAndFlush(buf);
     }
 
 }

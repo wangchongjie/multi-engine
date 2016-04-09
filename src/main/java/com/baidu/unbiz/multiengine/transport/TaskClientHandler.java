@@ -36,17 +36,17 @@ public class TaskClientHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
 
-        TaskCommand command = new TaskCommand();
-        command.setTaskBean("deviceStatFetcher");
-        command.setParams(null);
-
-        ByteBuf buf = Unpooled.buffer(TaskClient.SIZE);
-
-        Codec codec = new ProtostuffCodec();
-        buf.writeBytes(codec.encode(TaskCommand.class, command));
-        ctx.writeAndFlush(buf);
-
-        LOG.info("Send command:" + command);
+//        TaskCommand command = new TaskCommand();
+//        command.setTaskBean("deviceStatFetcher");
+//        command.setParams(null);
+//
+//        ByteBuf buf = Unpooled.buffer(TaskClient.SIZE);
+//
+//        Codec codec = new ProtostuffCodec();
+//        buf.writeBytes(codec.encode(TaskCommand.class, command));
+//        ctx.writeAndFlush(buf);
+//
+//        LOG.info("Send command:" + command);
     }
 
     @Override
