@@ -17,7 +17,7 @@ import com.baidu.unbiz.multitask.task.ParallelExePool;
 import com.baidu.unbiz.multitask.task.thread.MultiResult;
 import com.baidu.unbiz.multitask.task.thread.TaskManager;
 import com.baidu.unbiz.multiengine.vo.DeviceRequest;
-import com.baidu.unbiz.multiengine.transport.DeviceViewItem;
+import com.baidu.unbiz.multiengine.vo.DeviceViewItem;
 import com.baidu.unbiz.multiengine.vo.QueryParam;
 
 @RunWith(SpringJUnit4ClassRunner.class)

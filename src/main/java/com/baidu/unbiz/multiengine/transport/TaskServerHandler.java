@@ -75,7 +75,7 @@ public class TaskServerHandler extends ChannelInboundHandlerAdapter implements A
 
             ParallelExePool parallelExePool = getParallelExePool();
             MultiResult results = parallelExePool.submit(new TaskPair(command.getTaskBean(), command.getParams()));
-            List<DeviceViewItem> response = results.getResult(command.getTaskBean());
+            Object response = results.getResult(command.getTaskBean());
 
             RpcResult result = RpcResult.newInstance().setResult(response);
 

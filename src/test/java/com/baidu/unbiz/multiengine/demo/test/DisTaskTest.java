@@ -1,32 +1,58 @@
 package com.baidu.unbiz.multiengine.demo.test;
 
-import javax.annotation.Resource;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.baidu.unbiz.multiengine.transport.TaskClient;
 import com.baidu.unbiz.multiengine.transport.TaskServer;
-import com.baidu.unbiz.multiengine.transport.TaskServerHandler;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/applicationContext-test.xml")
 public class DisTaskTest {
 
-//    @Resource
-//    TaskServerHandler handler;
+    //    @Resource
+    //    TaskServerHandler handler;
 
     /**
      * 正常并行查询测试
      */
     @Test
     public void testDisTask() {
+        Thread serverThread = new Thread() {
+            public void run() {
+                try {
+                    TaskServer.main(null);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        Thread clientThread = new Thread() {
+            public void run() {
+                try {
+                    Thread.sleep(1000);
+                    TaskClient.main(null);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        serverThread.start();
+        clientThread.start();
+
         try {
-            TaskServer.main(null);
-        } catch (Exception e) {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
+        Object result = TaskClient.getResult();
+        System.out.println(result);
     }
+
+
 }

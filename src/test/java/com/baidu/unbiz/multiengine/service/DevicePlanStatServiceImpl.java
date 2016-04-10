@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.baidu.unbiz.multiengine.exception.BusinessException;
 import com.baidu.unbiz.multiengine.vo.DeviceRequest;
-import com.baidu.unbiz.multiengine.transport.DeviceViewItem;
+import com.baidu.unbiz.multiengine.vo.DeviceViewItem;
 import com.baidu.unbiz.multitask.annotation.TaskBean;
 import com.baidu.unbiz.multitask.annotation.TaskService;
 

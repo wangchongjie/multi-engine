@@ -1,4 +1,4 @@
-package com.baidu.unbiz.multiengine.transport;
+package com.baidu.unbiz.multiengine.vo;
 
 /**
  * 分设备维度模型

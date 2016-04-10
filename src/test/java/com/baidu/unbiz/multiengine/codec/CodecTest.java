@@ -7,7 +7,7 @@ import org.junit.Test;
 
 import com.baidu.unbiz.multiengine.codec.impl.ProtostuffCodec;
 import com.baidu.unbiz.multiengine.dto.RpcParam;
-import com.baidu.unbiz.multiengine.transport.DeviceViewItem;
+import com.baidu.unbiz.multiengine.vo.DeviceViewItem;
 
 /**
  * Created by wangchongjie on 16/4/5.

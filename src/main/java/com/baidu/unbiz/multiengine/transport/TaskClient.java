@@ -2,8 +2,12 @@ package com.baidu.unbiz.multiengine.transport;
 
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import com.baidu.unbiz.multiengine.codec.Codec;
 import com.baidu.unbiz.multiengine.codec.impl.ProtostuffCodec;
+import com.baidu.unbiz.multiengine.dto.RpcResult;
 import com.baidu.unbiz.multiengine.dto.TaskCommand;
 import com.baidu.unbiz.multiengine.tmp.Endpoint;
 import com.baidu.unbiz.multiengine.tmp.EndpointUtil;
@@ -39,6 +43,10 @@ public final class TaskClient {
     static final int SIZE = Integer.parseInt(System.getProperty("size", "256"));
 
     private static ConcurrentHashMap<String, Channel> sessionChannelMap = new ConcurrentHashMap<String, Channel>();
+    private static ConcurrentHashMap<String, Object> sessionResultMap = new ConcurrentHashMap<String, Object>();
+
+    private static final Log LOG = LogFactory.getLog(TaskClient.class);
+
 
     public static void main(String[] args) throws Exception {
         // Configure SSL.git
@@ -95,6 +103,33 @@ public final class TaskClient {
 
         Channel channel = sessionChannelMap.get("test");
         channel.writeAndFlush(buf);
+    }
+
+    public static void setResult(Object result) {
+        sessionResultMap.put("test", result);
+    }
+
+    public static Object getResult() {
+
+        ByteBuf buf = (ByteBuf) sessionResultMap.get("test");
+        Codec codec = new ProtostuffCodec();
+        byte[] bytes = new byte[buf.readableBytes()];
+        buf.readBytes(bytes);
+        RpcResult result = codec.decode(RpcResult.class, bytes);
+        LOG.info("client channel read task:" + result.getResult());
+
+        return result;
+        //        Channel channel = sessionChannelMap.get("test");
+        //        channel.read();
+        //        if (msg instanceof ByteBuf) {
+        //            Codec codec = new ProtostuffCodec();
+        //
+        //            ByteBuf buf = (ByteBuf) msg;
+        //            byte[] bytes = new byte[buf.readableBytes()];
+        //            buf.readBytes(bytes);
+        //            RpcResult result = codec.decode(RpcResult.class, bytes);
+        //            LOG.info("client channel read task:" + result.getResult());
+        //        }
     }
 
 }

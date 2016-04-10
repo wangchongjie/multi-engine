@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.baidu.unbiz.multitask.task.Taskable;
 import com.baidu.unbiz.multiengine.vo.DeviceRequest;
-import com.baidu.unbiz.multiengine.transport.DeviceViewItem;
+import com.baidu.unbiz.multiengine.vo.DeviceViewItem;
 
 /**
  * Created by wangchongjie on 15/12/21.

@@ -53,13 +53,16 @@ public class TaskClientHandler extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
 
         if (msg instanceof ByteBuf) {
-            Codec codec = new ProtostuffCodec();
 
-            ByteBuf buf = (ByteBuf) msg;
-            byte[] bytes = new byte[buf.readableBytes()];
-            buf.readBytes(bytes);
-            RpcResult result = codec.decode(RpcResult.class, bytes);
-            LOG.info("client channel read task:" + result.getResult());
+            TaskClient.setResult(msg);
+
+//            Codec codec = new ProtostuffCodec();
+//
+//            ByteBuf buf = (ByteBuf) msg;
+//            byte[] bytes = new byte[buf.readableBytes()];
+//            buf.readBytes(bytes);
+//            RpcResult result = codec.decode(RpcResult.class, bytes);
+//            LOG.info("client channel read task:" + result.getResult());
         }
 
         //        ByteBuf in = (ByteBuf) msg;

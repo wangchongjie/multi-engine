@@ -3,7 +3,7 @@ package com.baidu.unbiz.multiengine.service;
 import java.util.List;
 
 import com.baidu.unbiz.multiengine.vo.DeviceRequest;
-import com.baidu.unbiz.multiengine.transport.DeviceViewItem;
+import com.baidu.unbiz.multiengine.vo.DeviceViewItem;
 
 /**
  * 获取设备数据接口
