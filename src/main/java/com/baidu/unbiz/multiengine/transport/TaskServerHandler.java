@@ -1,7 +1,5 @@
 package com.baidu.unbiz.multiengine.transport;
 
-import java.util.List;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeansException;
@@ -21,85 +19,44 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.util.ReferenceCountUtil;
 
 /**
- * 23   * Handler implementation for the echo server.
- * 24
+ * Handler implementation for the echo server.
  */
 @Sharable
-@Component
-public class TaskServerHandler extends ChannelInboundHandlerAdapter implements ApplicationContextAware {
+public class TaskServerHandler extends ContextAwareInboundHandler {
 
     private static final Log LOG = LogFactory.getLog(TaskServerHandler.class);
 
-    // Spring应用上下文环境
-    private static ApplicationContext applicationContext;
-
     public TaskServerHandler() {
-    }
-
-    public void setApplicationContext(ApplicationContext applicationContext) {
-        TaskServerHandler.applicationContext = applicationContext;
-    }
-
-    /**
-     * @return ApplicationContext
-     */
-    public static ApplicationContext getApplicationContext() {
-        return applicationContext;
-    }
-
-    /**
-     * 获取对象
-     *
-     * @return Object
-     *
-     * @throws BeansException
-     */
-    public static ParallelExePool getParallelExePool() throws BeansException {
-        ParallelExePool parallelExePool = (ParallelExePool) applicationContext.getBean("simpleParallelExePool");
-        return parallelExePool;
     }
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
         if (msg instanceof ByteBuf) {
 
+            // decode command
             Codec codec = new ProtostuffCodec();
-
             ByteBuf buf = (ByteBuf) msg;
             byte[] bytes = new byte[buf.readableBytes()];
             buf.readBytes(bytes);
             TaskCommand command = codec.decode(TaskCommand.class, bytes);
             LOG.info("channel read task:" + command);
 
-            ParallelExePool parallelExePool = getParallelExePool();
+            // execute command
+            ParallelExePool parallelExePool = bean("simpleParallelExePool");
             MultiResult results = parallelExePool.submit(new TaskPair(command.getTaskBean(), command.getParams()));
-            Object response = results.getResult(command.getTaskBean());
 
+            Object response = results.getResult(command.getTaskBean());
             RpcResult result = RpcResult.newInstance().setResult(response);
 
+            // send result to client
             buf.clear();
             buf.writeBytes(codec.encode(RpcResult.class, result));
             ctx.writeAndFlush(buf);
+            // ReferenceCountUtil.release(buf);
         }
-
-        //        ByteBuf in = (ByteBuf) msg;
-        //        try {
-        //            while (in.isReadable()) { // (1)
-        //                System.out.print((char) in.readByte());
-        //                System.out.flush();
-        //            }
-        //        } finally {
-        //            ReferenceCountUtil.release(msg); // (2)
-        //        }
-        //        String msgStr = "hello netty! im server.";
-        //        ByteBuf firstMessage = Unpooled.buffer(TaskClient.SIZE);
-        //        for(char c : msgStr.toCharArray()) {
-        //            firstMessage.writeChar(c);
-        //        }
-        //        ctx.writeAndFlush(firstMessage);
-        //        LOG.debug("channelRead");
     }
 
     @Override
@@ -112,6 +69,6 @@ public class TaskServerHandler extends ChannelInboundHandlerAdapter implements A
         LOG.error("exceptionCaught", cause);
         // Close the connection when an exception is raised.
         ctx.close();
-
     }
+
 }

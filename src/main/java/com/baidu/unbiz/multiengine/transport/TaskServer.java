@@ -21,8 +21,7 @@ import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.SelfSignedCertificate;
 
 /**
- * 34   * Echoes back any received data from a client.
- * 35
+ * Echoes back any received data from a client.
  */
 public final class TaskServer {
 

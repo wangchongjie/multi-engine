@@ -9,8 +9,6 @@ import com.baidu.unbiz.multiengine.codec.Codec;
 import com.baidu.unbiz.multiengine.codec.impl.ProtostuffCodec;
 import com.baidu.unbiz.multiengine.dto.RpcResult;
 import com.baidu.unbiz.multiengine.dto.TaskCommand;
-import com.baidu.unbiz.multiengine.tmp.Endpoint;
-import com.baidu.unbiz.multiengine.tmp.EndpointUtil;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
@@ -29,11 +27,10 @@ import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 
 /**
- * 32   * Sends one message when a connection is open and echoes back any received
- * 33   * data to the server.  Simply put, the echo client initiates the ping-pong
- * 34   * traffic between the echo client and server by sending the first message to
- * 35   * the server.
- * 36
+ * Sends one message when a connection is open and echoes back any received
+ * data to the server.  Simply put, the echo client initiates the ping-pong
+ * traffic between the echo client and server by sending the first message to
+ * the server.
  */
 public final class TaskClient {
 
@@ -46,7 +43,6 @@ public final class TaskClient {
     private static ConcurrentHashMap<String, Object> sessionResultMap = new ConcurrentHashMap<String, Object>();
 
     private static final Log LOG = LogFactory.getLog(TaskClient.class);
-
 
     public static void main(String[] args) throws Exception {
         // Configure SSL.git

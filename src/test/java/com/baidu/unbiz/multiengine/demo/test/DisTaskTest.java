@@ -12,12 +12,7 @@ import com.baidu.unbiz.multiengine.transport.TaskServer;
 @ContextConfiguration(locations = "/applicationContext-test.xml")
 public class DisTaskTest {
 
-    //    @Resource
-    //    TaskServerHandler handler;
 
-    /**
-     * 正常并行查询测试
-     */
     @Test
     public void testDisTask() {
         Thread serverThread = new Thread() {
