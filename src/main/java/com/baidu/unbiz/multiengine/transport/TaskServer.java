@@ -28,7 +28,7 @@ public final class TaskServer {
     static final boolean SSL = System.getProperty("ssl") != null;
     static final int PORT = Integer.parseInt(System.getProperty("port", "8007"));
 
-    public static void main(String[] args) throws Exception {
+    public static void start() throws Exception {
         // Configure SSL.
         final SslContext sslCtx;
         if (SSL) {

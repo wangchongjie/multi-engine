@@ -44,7 +44,7 @@ public final class TaskClient {
 
     private static final Log LOG = LogFactory.getLog(TaskClient.class);
 
-    public static void main(String[] args) throws Exception {
+    public static void start() throws Exception {
         // Configure SSL.git
         final SslContext sslCtx;
         if (SSL) {

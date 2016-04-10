@@ -18,7 +18,7 @@ public class DisTaskTest {
         Thread serverThread = new Thread() {
             public void run() {
                 try {
-                    TaskServer.main(null);
+                    TaskServer.start();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -29,7 +29,7 @@ public class DisTaskTest {
             public void run() {
                 dumySleep(1000);
                 try {
-                    TaskClient.main(null);
+                    TaskClient.start();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
