@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.util.Assert;
 
 import com.baidu.unbiz.multiengine.transport.TaskClient;
 import com.baidu.unbiz.multiengine.transport.TaskServer;
@@ -11,7 +12,6 @@ import com.baidu.unbiz.multiengine.transport.TaskServer;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/applicationContext-test.xml")
 public class DisTaskTest {
-
 
     @Test
     public void testDisTask() {
@@ -27,27 +27,31 @@ public class DisTaskTest {
 
         Thread clientThread = new Thread() {
             public void run() {
+                dumySleep(1000);
                 try {
-                    Thread.sleep(1000);
                     TaskClient.main(null);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+
             }
         };
 
         serverThread.start();
         clientThread.start();
 
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
+        dumySleep(2000);
         Object result = TaskClient.getResult();
+        Assert.notNull(result);
         System.out.println(result);
     }
 
+    private void dumySleep(long time) {
+        try {
+            Thread.sleep(time);
+        } catch (InterruptedException e) {
+            // do nothing
+        }
+    }
 
 }
