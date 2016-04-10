@@ -29,24 +29,12 @@ public class TaskClientHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
 
-        //        TaskCommand command = new TaskCommand();
-        //        command.setTaskBean("deviceStatFetcher");
-        //        command.setParams(null);
-        //
-        //        ByteBuf buf = Unpooled.buffer(TaskClient.SIZE);
-        //
-        //        Codec codec = new ProtostuffCodec();
-        //        buf.writeBytes(codec.encode(TaskCommand.class, command));
-        //        ctx.writeAndFlush(buf);
-        //
-        //        LOG.info("Send command:" + command);
     }
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
 
         if (msg instanceof ByteBuf) {
-
             TaskClient.setResult(msg);
 
             //            Codec codec = new ProtostuffCodec();
@@ -57,16 +45,6 @@ public class TaskClientHandler extends ChannelInboundHandlerAdapter {
             //            RpcResult result = codec.decode(RpcResult.class, bytes);
             //            LOG.info("client channel read task:" + result.getResult());
         }
-
-        //        ByteBuf in = (ByteBuf) msg;
-        //        try {
-        //            while (in.isReadable()) { // (1)
-        //                System.out.print((char) in.readByte());
-        //                System.out.flush();
-        //            }
-        //        } finally {
-        //            ReferenceCountUtil.release(msg); // (2)
-        //        }
     }
 
     @Override

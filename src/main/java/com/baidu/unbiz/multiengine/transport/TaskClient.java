@@ -115,17 +115,6 @@ public final class TaskClient {
         LOG.info("client channel read task:" + result.getResult());
 
         return result;
-        //        Channel channel = sessionChannelMap.get("test");
-        //        channel.read();
-        //        if (msg instanceof ByteBuf) {
-        //            Codec codec = new ProtostuffCodec();
-        //
-        //            ByteBuf buf = (ByteBuf) msg;
-        //            byte[] bytes = new byte[buf.readableBytes()];
-        //            buf.readBytes(bytes);
-        //            RpcResult result = codec.decode(RpcResult.class, bytes);
-        //            LOG.info("client channel read task:" + result.getResult());
-        //        }
     }
 
 }
