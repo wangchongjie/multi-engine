@@ -1,5 +1,8 @@
 package com.baidu.unbiz.multiengine.vo;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
+
 /**
  * 分设备维度模型
  *
@@ -52,5 +55,7 @@ public class DeviceViewItem {
         this.deviceName = deviceName;
     }
 
-
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+    }
 }

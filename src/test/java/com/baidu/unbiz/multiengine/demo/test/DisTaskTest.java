@@ -6,6 +6,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.util.Assert;
 
+import com.baidu.unbiz.multiengine.dto.RpcResult;
 import com.baidu.unbiz.multiengine.transport.TaskClient;
 import com.baidu.unbiz.multiengine.transport.TaskServer;
 
@@ -42,10 +43,9 @@ public class DisTaskTest {
 
         dumySleep(500);
         TaskClient.makeCall();
-        dumySleep(200);
-        Object result = TaskClient.getResult();
+        RpcResult result = TaskClient.getResult();
         Assert.notNull(result);
-        System.out.println(result);
+        System.out.println(result.getResult());
     }
 
     private void dumySleep(long time) {
