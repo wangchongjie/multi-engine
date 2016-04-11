@@ -1,7 +1,5 @@
 package com.baidu.unbiz.multiengine.transport;
 
-import java.util.concurrent.ConcurrentHashMap;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -35,13 +33,9 @@ import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 public final class TaskClient {
 
     private static final Log LOG = LogFactory.getLog(TaskClient.class);
-
-    private  HostConf hostConf;
-
     private static final int SIZE = Integer.parseInt(System.getProperty("size", "256"));
 
-    private static ConcurrentHashMap<String, Channel> sessionChannelMap = new ConcurrentHashMap<String, Channel>();
-    private static ConcurrentHashMap<String, SendFutrue> sessionResultMap = new ConcurrentHashMap<String, SendFutrue>();
+    private  HostConf hostConf;
 
     public void start() {
         final TaskClient client = this;
@@ -57,7 +51,7 @@ public final class TaskClient {
         }.start();
     }
 
-    public void doStart() throws Exception {
+    private void doStart() throws Exception {
         // Configure SSL.git
         final SslContext sslCtx;
         if (hostConf.isSsl()) {
@@ -89,7 +83,7 @@ public final class TaskClient {
             // Start the client.
             ChannelFuture f = b.connect(hostConf.getHost(), hostConf.getPort()).sync();
 
-            sessionChannelMap.put("test", f.channel());
+            TaskClientContext.sessionChannelMap.put("test", f.channel());
 
             // Wait until the connection is closed.
             f.channel().closeFuture().sync();
@@ -105,22 +99,16 @@ public final class TaskClient {
         Codec codec = new ProtostuffCodec();
         buf.writeBytes(codec.encode(TaskCommand.class, command));
 
-        Channel channel = sessionChannelMap.get("test");
+        Channel channel = TaskClientContext.sessionChannelMap.get("test");
         channel.writeAndFlush(buf);
         SendFutrue sendFutrue = new SendFutrueImpl();
-        sessionResultMap.put("test", sendFutrue);
+        TaskClientContext.sessionResultMap.put("test", sendFutrue);
 
-        return getResult("test");
+        return handleResult("test");
     }
 
-    public static void fillResult(Object result) {
-        SendFutrue sendFutrue = sessionResultMap.get("test");
-        sendFutrue.set(result);
-        sessionResultMap.put("test", sendFutrue);
-    }
-
-    private static <T> T getResult(String sessionKey) {
-        SendFutrue sendFutrue = sessionResultMap.get(sessionKey);
+    private static <T> T handleResult(String sessionKey) {
+        SendFutrue sendFutrue = TaskClientContext.sessionResultMap.get(sessionKey);
 
         ByteBuf buf = sendFutrue.get();
         Codec codec = new ProtostuffCodec();

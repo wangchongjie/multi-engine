@@ -34,8 +34,14 @@ public class TaskClientHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
         if (msg instanceof ByteBuf) {
-            TaskClient.fillResult(msg);
+            this.fillResult(msg);
         }
+    }
+
+    private void fillResult(Object result) {
+        SendFutrue sendFutrue = TaskClientContext.sessionResultMap.get("test");
+        sendFutrue.set(result);
+        TaskClientContext.sessionResultMap.put("test", sendFutrue);
     }
 
     @Override
