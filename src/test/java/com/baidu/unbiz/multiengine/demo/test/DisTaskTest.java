@@ -7,6 +7,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.util.Assert;
 
 import com.baidu.unbiz.multiengine.dto.RpcResult;
+import com.baidu.unbiz.multiengine.dto.TaskCommand;
 import com.baidu.unbiz.multiengine.transport.TaskClient;
 import com.baidu.unbiz.multiengine.transport.TaskServer;
 
@@ -42,8 +43,12 @@ public class DisTaskTest {
         clientThread.start();
 
         dumySleep(500);
-        TaskClient.makeCall();
-        RpcResult result = TaskClient.getResult();
+
+        TaskCommand command = new TaskCommand();
+        command.setTaskBean("deviceStatFetcher");
+        command.setParams(null);
+        RpcResult result = TaskClient.makeCall(command);
+
         Assert.notNull(result);
         System.out.println(result.getResult());
     }

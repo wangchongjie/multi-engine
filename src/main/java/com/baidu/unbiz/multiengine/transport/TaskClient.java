@@ -86,11 +86,7 @@ public final class TaskClient {
         }
     }
 
-    public static void makeCall() {
-        TaskCommand command = new TaskCommand();
-        command.setTaskBean("deviceStatFetcher");
-        command.setParams(null);
-
+    public static <T> T makeCall(TaskCommand command) {
         ByteBuf buf = Unpooled.buffer(TaskClient.SIZE);
 
         Codec codec = new ProtostuffCodec();
@@ -100,6 +96,8 @@ public final class TaskClient {
         channel.writeAndFlush(buf);
         SendFutrue sendFutrue = new SendFutrueImpl();
         sessionResultMap.put("test", sendFutrue);
+
+        return getResult("test");
     }
 
     public static void setResult(Object result) {
@@ -108,9 +106,8 @@ public final class TaskClient {
         sessionResultMap.put("test", sendFutrue);
     }
 
-    public static <T> T getResult() {
-
-        SendFutrue sendFutrue = sessionResultMap.get("test");
+    private static <T> T getResult(String sessionKey) {
+        SendFutrue sendFutrue = sessionResultMap.get(sessionKey);
 
         ByteBuf buf = sendFutrue.get();
         Codec codec = new ProtostuffCodec();
