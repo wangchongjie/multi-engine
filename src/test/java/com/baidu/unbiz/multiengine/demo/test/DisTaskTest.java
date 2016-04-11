@@ -27,7 +27,7 @@ public class DisTaskTest {
 
         Thread clientThread = new Thread() {
             public void run() {
-                dumySleep(1000);
+                dumySleep(300);
                 try {
                     TaskClient.start();
                 } catch (Exception e) {
@@ -40,7 +40,9 @@ public class DisTaskTest {
         serverThread.start();
         clientThread.start();
 
-        dumySleep(2000);
+        dumySleep(500);
+        TaskClient.makeCall();
+        dumySleep(200);
         Object result = TaskClient.getResult();
         Assert.notNull(result);
         System.out.println(result);

@@ -77,7 +77,6 @@ public final class TaskClient {
             ChannelFuture f = b.connect(HOST, PORT).sync();
 
             sessionChannelMap.put("test", f.channel());
-            mockCall();
 
             // Wait until the connection is closed.
             f.channel().closeFuture().sync();
@@ -87,7 +86,7 @@ public final class TaskClient {
         }
     }
 
-    public static void mockCall() {
+    public static void makeCall() {
         TaskCommand command = new TaskCommand();
         command.setTaskBean("deviceStatFetcher");
         command.setParams(null);
