@@ -34,20 +34,33 @@ import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
  */
 public final class TaskClient {
 
-    static final boolean SSL = System.getProperty("ssl") != null;
-    static final String HOST = System.getProperty("host", "127.0.0.1");
-    static final int PORT = Integer.parseInt(System.getProperty("port", "8007"));
-    static final int SIZE = Integer.parseInt(System.getProperty("size", "256"));
+    private static final Log LOG = LogFactory.getLog(TaskClient.class);
+
+    private  HostConf hostConf;
+
+    private static final int SIZE = Integer.parseInt(System.getProperty("size", "256"));
 
     private static ConcurrentHashMap<String, Channel> sessionChannelMap = new ConcurrentHashMap<String, Channel>();
     private static ConcurrentHashMap<String, SendFutrue> sessionResultMap = new ConcurrentHashMap<String, SendFutrue>();
 
-    private static final Log LOG = LogFactory.getLog(TaskClient.class);
+    public void start() {
+        final TaskClient client = this;
+        new Thread(){
+            @Override
+            public void run() {
+                try {
+                    client.doStart();
+                } catch (Exception e) {
+                    LOG.error("client run fail:", e);
+                }
+            }
+        }.start();
+    }
 
-    public static void start() throws Exception {
+    public void doStart() throws Exception {
         // Configure SSL.git
         final SslContext sslCtx;
-        if (SSL) {
+        if (hostConf.isSsl()) {
             sslCtx = SslContextBuilder.forClient()
                     .trustManager(InsecureTrustManagerFactory.INSTANCE).build();
         } else {
@@ -66,7 +79,7 @@ public final class TaskClient {
                         public void initChannel(SocketChannel ch) throws Exception {
                             ChannelPipeline p = ch.pipeline();
                             if (sslCtx != null) {
-                                p.addLast(sslCtx.newHandler(ch.alloc(), HOST, PORT));
+                                p.addLast(sslCtx.newHandler(ch.alloc(), hostConf.getHost(), hostConf.getPort()));
                             }
                             //p.addLast(new LoggingHandler(LogLevel.INFO));
                             p.addLast(new TaskClientHandler());
@@ -74,7 +87,7 @@ public final class TaskClient {
                     });
 
             // Start the client.
-            ChannelFuture f = b.connect(HOST, PORT).sync();
+            ChannelFuture f = b.connect(hostConf.getHost(), hostConf.getPort()).sync();
 
             sessionChannelMap.put("test", f.channel());
 
@@ -86,7 +99,7 @@ public final class TaskClient {
         }
     }
 
-    public static <T> T makeCall(TaskCommand command) {
+    public <T> T makeCall(TaskCommand command) {
         ByteBuf buf = Unpooled.buffer(TaskClient.SIZE);
 
         Codec codec = new ProtostuffCodec();
@@ -100,7 +113,7 @@ public final class TaskClient {
         return getResult("test");
     }
 
-    public static void setResult(Object result) {
+    public static void fillResult(Object result) {
         SendFutrue sendFutrue = sessionResultMap.get("test");
         sendFutrue.set(result);
         sessionResultMap.put("test", sendFutrue);
@@ -119,4 +132,11 @@ public final class TaskClient {
         return (T) result;
     }
 
+    public HostConf getHostConf() {
+        return hostConf;
+    }
+
+    public void setHostConf(HostConf hostConf) {
+        this.hostConf = hostConf;
+    }
 }

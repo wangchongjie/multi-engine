@@ -8,46 +8,33 @@ import org.springframework.util.Assert;
 
 import com.baidu.unbiz.multiengine.dto.RpcResult;
 import com.baidu.unbiz.multiengine.dto.TaskCommand;
+import com.baidu.unbiz.multiengine.transport.HostConf;
 import com.baidu.unbiz.multiengine.transport.TaskClient;
+import com.baidu.unbiz.multiengine.transport.TaskClientFactory;
 import com.baidu.unbiz.multiengine.transport.TaskServer;
+import com.baidu.unbiz.multiengine.transport.TaskServerFactory;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/applicationContext-test.xml")
 public class DisTaskTest {
 
     @Test
-    public void testDisTask() {
-        Thread serverThread = new Thread() {
-            public void run() {
-                try {
-                    TaskServer.start();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        };
+    public void testRunDisTask() {
 
-        Thread clientThread = new Thread() {
-            public void run() {
-                dumySleep(300);
-                try {
-                    TaskClient.start();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+        HostConf hostConf = new HostConf();
 
-            }
-        };
+        TaskServer taskServer = TaskServerFactory.createTaskServer(hostConf);
+        taskServer.start();
+        dumySleep(500);
 
-        serverThread.start();
-        clientThread.start();
-
+        TaskClient taskClient = TaskClientFactory.createTaskClient(hostConf);
+        taskClient.start();
         dumySleep(500);
 
         TaskCommand command = new TaskCommand();
         command.setTaskBean("deviceStatFetcher");
         command.setParams(null);
-        RpcResult result = TaskClient.makeCall(command);
+        RpcResult result = taskClient.makeCall(command);
 
         Assert.notNull(result);
         System.out.println(result.getResult());

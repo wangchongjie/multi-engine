@@ -2,6 +2,8 @@ package com.baidu.unbiz.multiengine.transport;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 
@@ -25,13 +27,28 @@ import io.netty.handler.ssl.util.SelfSignedCertificate;
  */
 public final class TaskServer {
 
-    static final boolean SSL = System.getProperty("ssl") != null;
-    static final int PORT = Integer.parseInt(System.getProperty("port", "8007"));
+    private static final Log LOG = LogFactory.getLog(TaskServer.class);
 
-    public static void start() throws Exception {
+    private HostConf hostConf;
+
+    public void start() {
+        final TaskServer server = this;
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    server.doStart();
+                } catch (Exception e) {
+                    LOG.error("server run fail:", e);
+                }
+            }
+        }.start();
+    }
+
+    private void doStart() throws Exception {
         // Configure SSL.
         final SslContext sslCtx;
-        if (SSL) {
+        if (hostConf.isSsl()) {
             SelfSignedCertificate ssc = new SelfSignedCertificate();
             sslCtx = SslContextBuilder.forServer(ssc.certificate(), ssc.privateKey()).build();
         } else {
@@ -60,7 +77,7 @@ public final class TaskServer {
                     });
 
             // Start the server.
-            ChannelFuture f = b.bind(PORT).sync();
+            ChannelFuture f = b.bind(hostConf.getPort()).sync();
 
             // Wait until the server socket is closed.
             f.channel().closeFuture().sync();
@@ -70,4 +87,13 @@ public final class TaskServer {
             workerGroup.shutdownGracefully();
         }
     }
+
+    public HostConf getHostConf() {
+        return hostConf;
+    }
+
+    public void setHostConf(HostConf hostConf) {
+        this.hostConf = hostConf;
+    }
+
 }
