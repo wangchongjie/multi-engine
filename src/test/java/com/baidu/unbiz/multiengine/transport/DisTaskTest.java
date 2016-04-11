@@ -1,4 +1,4 @@
-package com.baidu.unbiz.multiengine.demo.test;
+package com.baidu.unbiz.multiengine.transport;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -8,11 +8,10 @@ import org.springframework.util.Assert;
 
 import com.baidu.unbiz.multiengine.dto.RpcResult;
 import com.baidu.unbiz.multiengine.dto.TaskCommand;
-import com.baidu.unbiz.multiengine.transport.HostConf;
-import com.baidu.unbiz.multiengine.transport.TaskClient;
-import com.baidu.unbiz.multiengine.transport.TaskClientFactory;
-import com.baidu.unbiz.multiengine.transport.TaskServer;
-import com.baidu.unbiz.multiengine.transport.TaskServerFactory;
+import com.baidu.unbiz.multiengine.transport.client.TaskClient;
+import com.baidu.unbiz.multiengine.transport.client.TaskClientFactory;
+import com.baidu.unbiz.multiengine.transport.server.TaskServer;
+import com.baidu.unbiz.multiengine.transport.server.TaskServerFactory;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/applicationContext-test.xml")

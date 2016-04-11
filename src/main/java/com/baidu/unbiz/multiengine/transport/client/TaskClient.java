@@ -1,4 +1,4 @@
-package com.baidu.unbiz.multiengine.transport;
+package com.baidu.unbiz.multiengine.transport.client;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -7,6 +7,7 @@ import com.baidu.unbiz.multiengine.codec.Codec;
 import com.baidu.unbiz.multiengine.codec.impl.ProtostuffCodec;
 import com.baidu.unbiz.multiengine.dto.RpcResult;
 import com.baidu.unbiz.multiengine.dto.TaskCommand;
+import com.baidu.unbiz.multiengine.transport.HostConf;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
@@ -35,11 +36,11 @@ public final class TaskClient {
     private static final Log LOG = LogFactory.getLog(TaskClient.class);
     private static final int SIZE = Integer.parseInt(System.getProperty("size", "256"));
 
-    private  HostConf hostConf;
+    private HostConf hostConf;
 
     public void start() {
         final TaskClient client = this;
-        new Thread(){
+        new Thread() {
             @Override
             public void run() {
                 try {
