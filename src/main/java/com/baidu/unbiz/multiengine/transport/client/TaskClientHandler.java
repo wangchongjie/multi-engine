@@ -22,10 +22,16 @@ public class TaskClientHandler extends ChannelInboundHandlerAdapter {
 
     private static final Log LOG = LogFactory.getLog(TaskServerHandler.class);
 
+    private String sessionKey;
+
     /**
      * Creates a client-side handler.
      */
     public TaskClientHandler() {
+    }
+
+    public TaskClientHandler(String sessionKey) {
+        this.sessionKey = sessionKey;
     }
 
     @Override
@@ -41,9 +47,9 @@ public class TaskClientHandler extends ChannelInboundHandlerAdapter {
     }
 
     private void fillResult(Object result) {
-        SendFutrue sendFutrue = TaskClientContext.sessionResultMap.get("test");
+        SendFutrue sendFutrue = TaskClientContext.sessionResultMap.get(sessionKey);
         sendFutrue.set(result);
-        TaskClientContext.sessionResultMap.put("test", sendFutrue);
+        TaskClientContext.sessionResultMap.put(sessionKey, sendFutrue);
     }
 
     @Override

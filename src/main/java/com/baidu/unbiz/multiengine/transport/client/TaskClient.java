@@ -37,6 +37,7 @@ public final class TaskClient {
     private static final int SIZE = Integer.parseInt(System.getProperty("size", "256"));
 
     private HostConf hostConf;
+    private String sessionKey;
 
     public void start() {
         final TaskClient client = this;
@@ -77,14 +78,14 @@ public final class TaskClient {
                                 p.addLast(sslCtx.newHandler(ch.alloc(), hostConf.getHost(), hostConf.getPort()));
                             }
                             //p.addLast(new LoggingHandler(LogLevel.INFO));
-                            p.addLast(new TaskClientHandler());
+                            p.addLast(new TaskClientHandler(sessionKey));
                         }
                     });
 
             // Start the client.
             ChannelFuture f = b.connect(hostConf.getHost(), hostConf.getPort()).sync();
 
-            TaskClientContext.sessionChannelMap.put("test", f.channel());
+            TaskClientContext.sessionChannelMap.put(sessionKey, f.channel());
 
             // Wait until the connection is closed.
             f.channel().closeFuture().sync();
@@ -100,12 +101,12 @@ public final class TaskClient {
         Codec codec = new ProtostuffCodec();
         buf.writeBytes(codec.encode(TaskCommand.class, command));
 
-        Channel channel = TaskClientContext.sessionChannelMap.get("test");
+        Channel channel = TaskClientContext.sessionChannelMap.get(sessionKey);
         channel.writeAndFlush(buf);
         SendFutrue sendFutrue = new SendFutrueImpl();
-        TaskClientContext.sessionResultMap.put("test", sendFutrue);
+        TaskClientContext.sessionResultMap.put(sessionKey, sendFutrue);
 
-        return handleResult("test");
+        return handleResult(sessionKey);
     }
 
     private static <T> T handleResult(String sessionKey) {
@@ -119,6 +120,14 @@ public final class TaskClient {
         LOG.info("client channel read task:" + result.getResult());
 
         return (T) result;
+    }
+
+    public String getSessionKey() {
+        return sessionKey;
+    }
+
+    public void setSessionKey(String sessionKey) {
+        this.sessionKey = sessionKey;
     }
 
     public HostConf getHostConf() {
