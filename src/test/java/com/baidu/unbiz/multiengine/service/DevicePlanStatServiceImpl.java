@@ -3,6 +3,9 @@ package com.baidu.unbiz.multiengine.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import com.baidu.unbiz.multiengine.exception.BusinessException;
 import com.baidu.unbiz.multiengine.vo.DeviceRequest;
 import com.baidu.unbiz.multiengine.vo.DeviceViewItem;
@@ -11,10 +14,11 @@ import com.baidu.unbiz.multitask.annotation.TaskService;
 
 /**
  * 该类会被并行组件监测到，并将其方法包装成可并行执行的Fetcher
- *
  */
 @TaskService
 public class DevicePlanStatServiceImpl implements DevicePlanStatService {
+
+    private static final Log LOG = LogFactory.getLog(DevicePlanStatServiceImpl.class);
 
     /**
      * 并行组件会将该方法包装成一个可并行执行的Fetcher
@@ -23,8 +27,17 @@ public class DevicePlanStatServiceImpl implements DevicePlanStatService {
     public List<DeviceViewItem> queryPlanDeviceData(DeviceRequest req) {
         this.checkParam(req);
         // Test ThreadLocal
-        System.out.println(MyThreadLocal.get());
+        LOG.debug("ThreadLocal" + MyThreadLocal.get());
         return this.mockList1();
+    }
+
+    /**
+     * 并行组件会将该方法包装成一个可并行执行的Fetcher
+     */
+    @TaskBean("deviceBigDataStatFetcher")
+    public List<DeviceViewItem> queryPlanDeviceDataWithBigData(DeviceRequest req) {
+        this.checkParam(req);
+        return this.mockList3();
     }
 
     /**
@@ -93,6 +106,14 @@ public class DevicePlanStatServiceImpl implements DevicePlanStatService {
         list.add(new DeviceViewItem());
         list.add(new DeviceViewItem());
         list.add(new DeviceViewItem());
+        return list;
+    }
+
+    private List<DeviceViewItem> mockList3() {
+        List<DeviceViewItem> list = new ArrayList<DeviceViewItem>();
+        for (int i = 0; i < 100; i++) {
+            list.add(new DeviceViewItem());
+        }
         return list;
     }
 }

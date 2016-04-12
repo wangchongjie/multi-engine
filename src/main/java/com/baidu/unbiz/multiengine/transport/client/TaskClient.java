@@ -8,6 +8,7 @@ import com.baidu.unbiz.multiengine.codec.impl.ProtostuffCodec;
 import com.baidu.unbiz.multiengine.dto.RpcResult;
 import com.baidu.unbiz.multiengine.dto.TaskCommand;
 import com.baidu.unbiz.multiengine.transport.HostConf;
+import com.baidu.unbiz.multiengine.transport.SequenceIdGen;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
@@ -38,6 +39,7 @@ public final class TaskClient {
 
     private HostConf hostConf;
     private String sessionKey;
+    private SequenceIdGen idGen;
 
     public void start() {
         final TaskClient client = this;
@@ -84,7 +86,7 @@ public final class TaskClient {
 
             // Start the client.
             ChannelFuture f = b.connect(hostConf.getHost(), hostConf.getPort()).sync();
-
+            // keep channel in context
             TaskClientContext.sessionChannelMap.put(sessionKey, f.channel());
 
             // Wait until the connection is closed.
@@ -98,26 +100,31 @@ public final class TaskClient {
     public <T> T makeCall(TaskCommand command) {
         ByteBuf buf = Unpooled.buffer(TaskClient.SIZE);
 
+        long seqId = idGen.genId();
+        buf.writeLong(seqId);
+
         Codec codec = new ProtostuffCodec();
-        buf.writeBytes(codec.encode(TaskCommand.class, command));
+        byte[] bytes = codec.encode(TaskCommand.class, command);
+        buf.writeBytes(bytes);
 
         Channel channel = TaskClientContext.sessionChannelMap.get(sessionKey);
         channel.writeAndFlush(buf);
-        SendFutrue sendFutrue = new SendFutrueImpl();
-        TaskClientContext.sessionResultMap.put(sessionKey, sendFutrue);
+        SendFuture sendFutrue = new SendFutrueImpl();
 
-        return handleResult(sessionKey);
+
+        TaskClientContext.placeSessionResult(sessionKey, seqId, sendFutrue);
+
+        return handleResult(sessionKey, seqId);
     }
 
-    private static <T> T handleResult(String sessionKey) {
-        SendFutrue sendFutrue = TaskClientContext.sessionResultMap.get(sessionKey);
+    private static <T> T handleResult(String sessionKey, long seqId) {
+        SendFuture sendFutrue = TaskClientContext.getSessionResult(sessionKey, seqId);
 
-        ByteBuf buf = sendFutrue.get();
+        byte[] bytes = sendFutrue.get();
         Codec codec = new ProtostuffCodec();
-        byte[] bytes = new byte[buf.readableBytes()];
-        buf.readBytes(bytes);
+
         RpcResult result = codec.decode(RpcResult.class, bytes);
-        LOG.info("client channel read task:" + result.getResult());
+        LOG.debug("client channel read result:" + result.getResult());
 
         return (T) result;
     }
@@ -136,5 +143,13 @@ public final class TaskClient {
 
     public void setHostConf(HostConf hostConf) {
         this.hostConf = hostConf;
+    }
+
+    public SequenceIdGen getIdGen() {
+        return idGen;
+    }
+
+    public void setIdGen(SequenceIdGen idGen) {
+        this.idGen = idGen;
     }
 }

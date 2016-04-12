@@ -2,6 +2,7 @@ package com.baidu.unbiz.multiengine.transport.client;
 
 import com.baidu.unbiz.multiengine.transport.DefaultSessionIdProvider;
 import com.baidu.unbiz.multiengine.transport.HostConf;
+import com.baidu.unbiz.multiengine.transport.SequenceIdGen;
 import com.baidu.unbiz.multiengine.transport.SessionIdProvider;
 
 /**
@@ -15,6 +16,7 @@ public class TaskClientFactory {
         TaskClient taskClient = new TaskClient();
         taskClient.setHostConf(hostConf);
         taskClient.setSessionKey(idProvider.getSessionId(true));
+        taskClient.setIdGen(new SequenceIdGen());
         return taskClient;
     }
 }

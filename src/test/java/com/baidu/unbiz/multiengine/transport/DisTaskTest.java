@@ -39,6 +39,62 @@ public class DisTaskTest {
         System.out.println(result.getResult());
     }
 
+    @Test
+    public void testRunDisTaskByBigData() {
+
+        HostConf hostConf = new HostConf();
+
+        TaskServer taskServer = TaskServerFactory.createTaskServer(hostConf);
+        taskServer.start();
+        dumySleep(500);
+
+        TaskClient taskClient = TaskClientFactory.createTaskClient(hostConf);
+        taskClient.start();
+        dumySleep(500);
+
+        TaskCommand command = new TaskCommand();
+        command.setTaskBean("deviceBigDataStatFetcher");
+        command.setParams(null);
+        RpcResult result = taskClient.makeCall(command);
+
+        Assert.notNull(result);
+        System.out.println(result.getResult());
+    }
+
+    @Test
+    public void testRunDisTaskByMultiClient() {
+
+        HostConf hostConf = new HostConf();
+
+        TaskServer taskServer = TaskServerFactory.createTaskServer(hostConf);
+        taskServer.start();
+        dumySleep(500);
+
+        TaskClient taskClient1 = TaskClientFactory.createTaskClient(hostConf);
+        taskClient1.start();
+        TaskClient taskClient2 = TaskClientFactory.createTaskClient(hostConf);
+        taskClient2.start();
+        dumySleep(500);
+
+        TaskCommand command = new TaskCommand();
+        command.setTaskBean("deviceStatFetcher");
+        command.setParams(null);
+
+        RpcResult result1 = taskClient1.makeCall(command);
+        RpcResult result2 = taskClient2.makeCall(command);
+
+        for (int i = 0; i < 500; i++) {
+            result1 = taskClient1.makeCall(command);
+            result2 = taskClient2.makeCall(command);
+            Assert.isTrue(result1.toString().equals(result2.toString()));
+        }
+
+        Assert.notNull(result1);
+        Assert.notNull(result2);
+        System.out.println(result1.getResult());
+        System.out.println(result2.getResult());
+    }
+
     private void dumySleep(long time) {
         try {
             Thread.sleep(time);

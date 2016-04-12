@@ -4,7 +4,7 @@ package com.baidu.unbiz.multiengine.exception;
  * ClassName: CodecException <br/>
  * Function: 编解码异常
  */
-public class MuliEngineException extends RuntimeException {
+public class MultiEngineException extends RuntimeException {
 
     /**
      * serialVersionUID
@@ -14,7 +14,7 @@ public class MuliEngineException extends RuntimeException {
     /**
      * Creates a new instance of CodecException.
      */
-    public MuliEngineException() {
+    public MultiEngineException() {
         super();
     }
 
@@ -24,7 +24,7 @@ public class MuliEngineException extends RuntimeException {
      * @param arg0
      * @param arg1
      */
-    public MuliEngineException(String arg0, Throwable arg1) {
+    public MultiEngineException(String arg0, Throwable arg1) {
         super(arg0, arg1);
     }
 
@@ -33,7 +33,7 @@ public class MuliEngineException extends RuntimeException {
      *
      * @param arg0
      */
-    public MuliEngineException(String arg0) {
+    public MultiEngineException(String arg0) {
         super(arg0);
     }
 
@@ -42,7 +42,7 @@ public class MuliEngineException extends RuntimeException {
      *
      * @param arg0
      */
-    public MuliEngineException(Throwable arg0) {
+    public MultiEngineException(Throwable arg0) {
         super(arg0);
     }
 

@@ -10,7 +10,7 @@ import java.util.concurrent.TimeoutException;
  * @author wangchongjie
  * 
  */
-public interface SendFutrue {
+public interface SendFuture {
     /**
      * 获取返回结果
      * 
@@ -36,10 +36,11 @@ public interface SendFutrue {
      */
     void set(Object result);
 
-    /**
-     * 返回当前session id
-     * 
-     * @return session id
-     */
-    String getSessionId();
+
+    void append(Object result, AppendHandler handler, boolean finish);
+
+    interface AppendHandler {
+        void append(Object data, Object tail);
+        Object init();
+    }
 }
