@@ -16,13 +16,13 @@ public class CodecTest {
 
     @Test
     public void testProtostuffCodec(){
-        Codec codec = new ProtostuffCodec();
+        MsgCodec codec = new ProtostuffCodec();
 
         List<DeviceViewItem> dataList = mockList();
 
         RpcParam params = RpcParam.newInstance().setParams(dataList);
 
-        byte[] bytes = codec.encode(RpcParam.class, params);
+        byte[] bytes = codec.encode(params);
         System.out.println(bytes);
 
         RpcParam data = codec.decode(RpcParam.class, bytes);

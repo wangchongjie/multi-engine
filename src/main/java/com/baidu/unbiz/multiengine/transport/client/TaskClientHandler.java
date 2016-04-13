@@ -4,16 +4,12 @@ package com.baidu.unbiz.multiengine.transport.client;
  * Created by wangchongjie on 16/3/31.
  */
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.util.Assert;
 
-import com.baidu.unbiz.multiengine.codec.Codec;
-import com.baidu.unbiz.multiengine.codec.impl.ProtostuffCodec;
 import com.baidu.unbiz.multiengine.dto.RpcResult;
-import com.baidu.unbiz.multiengine.transport.protocol.NSHead;
+import com.baidu.unbiz.multiengine.dto.Signal;
 import com.baidu.unbiz.multiengine.transport.protocol.PackHead;
 import com.baidu.unbiz.multiengine.transport.server.TaskServerHandler;
 
@@ -49,6 +45,12 @@ public class TaskClientHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
+        if (msg instanceof Signal) {
+            Signal signal = (Signal) msg;
+            RpcResult result = (RpcResult) signal.getMessage();
+            TaskClientContext.fillSessionResult(sessionKey, signal.getSeqId(), result);
+        }
+
         if (msg instanceof ByteBuf) {
 
             ByteBuf buf = (ByteBuf) msg;
@@ -56,9 +58,7 @@ public class TaskClientHandler extends ChannelInboundHandlerAdapter {
             buf.readBytes(headBytes);
             PackHead packHead = PackHead.fromBytes(headBytes);
 
-            byte[] bodyBytes = new byte[buf.readableBytes()];
-            LOG.debug("channelRead buf.readableBytes:" + buf.readableBytes());
-            System.out.println("channelRead buf.readableBytes:" + buf.readableBytes());;
+            byte[] bodyBytes = new byte[packHead.getBodyLen()];
             buf.readBytes(bodyBytes);
 
             this.fillResult(packHead, bodyBytes);
@@ -66,22 +66,24 @@ public class TaskClientHandler extends ChannelInboundHandlerAdapter {
     }
 
     private void fillResult(final PackHead head, Object result) {
-
-        boolean finished = head.getRemainLen() == 0;
+        boolean finished = (head.getRemainLen() == 0);
 
         SendFuture.AppendHandler handler = new SendFuture.AppendHandler() {
             @Override
             public void append(Object data, Object tail) {
                 byte[] dataByte = (byte[]) data;
                 byte[] tailByte = (byte[]) tail;
+
+                Assert.isTrue(tailByte.length == head.getBodyLen());
                 int index = dataByte.length - head.getRemainLen() - tailByte.length;
-                System.out.println("index:" + index);
+System.out.println(head.getSeqId() + "index:" + index + "|" +dataByte.length + "|"+head.getRemainLen() +"|"+tailByte
+        .length);
                 System.arraycopy(tail, 0, data, index, tailByte.length);
             }
 
             @Override
             public Object init() {
-                return new byte[head.getBodyLen()];
+                return new byte[head.getSumLen()];
             }
         };
 

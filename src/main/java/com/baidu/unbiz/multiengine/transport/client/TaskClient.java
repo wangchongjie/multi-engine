@@ -1,14 +1,20 @@
 package com.baidu.unbiz.multiengine.transport.client;
 
+import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.util.Assert;
 
-import com.baidu.unbiz.multiengine.codec.Codec;
+import com.baidu.unbiz.multiengine.codec.DefaultByteCodecFactory;
+import com.baidu.unbiz.multiengine.codec.MsgCodec;
 import com.baidu.unbiz.multiengine.codec.impl.ProtostuffCodec;
 import com.baidu.unbiz.multiengine.dto.RpcResult;
+import com.baidu.unbiz.multiengine.dto.Signal;
 import com.baidu.unbiz.multiengine.dto.TaskCommand;
 import com.baidu.unbiz.multiengine.transport.HostConf;
 import com.baidu.unbiz.multiengine.transport.SequenceIdGen;
+import com.baidu.unbiz.multiengine.transport.protocol.PackUtils;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
@@ -22,6 +28,8 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.logging.LogLevel;
+import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
@@ -35,7 +43,7 @@ import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 public final class TaskClient {
 
     private static final Log LOG = LogFactory.getLog(TaskClient.class);
-    private static final int SIZE = Integer.parseInt(System.getProperty("size", "256"));
+    private static final int SIZE = Integer.parseInt(System.getProperty("size", "1024"));
 
     private HostConf hostConf;
     private String sessionKey;
@@ -65,6 +73,9 @@ public final class TaskClient {
             sslCtx = null;
         }
 
+        final DefaultByteCodecFactory codecFactory = new DefaultByteCodecFactory();
+        codecFactory.setMsgCodec(new ProtostuffCodec());
+
         // Configure the client.
         EventLoopGroup group = new NioEventLoopGroup();
         try {
@@ -75,12 +86,14 @@ public final class TaskClient {
                     .handler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         public void initChannel(SocketChannel ch) throws Exception {
-                            ChannelPipeline p = ch.pipeline();
+                            ChannelPipeline pipeline = ch.pipeline();
                             if (sslCtx != null) {
-                                p.addLast(sslCtx.newHandler(ch.alloc(), hostConf.getHost(), hostConf.getPort()));
+                                pipeline.addLast(sslCtx.newHandler(ch.alloc(), hostConf.getHost(), hostConf.getPort()));
                             }
-                            //p.addLast(new LoggingHandler(LogLevel.INFO));
-                            p.addLast(new TaskClientHandler(sessionKey));
+                            // pipeline.addLast(new LoggingHandler(LogLevel.INFO));
+                            pipeline.addLast("decoder", codecFactory.getDecoder());
+                            pipeline.addLast("encoder", codecFactory.getEncoder());
+                            pipeline.addLast(new TaskClientHandler(sessionKey));
                         }
                     });
 
@@ -98,35 +111,33 @@ public final class TaskClient {
     }
 
     public <T> T makeCall(TaskCommand command) {
-        ByteBuf buf = Unpooled.buffer(TaskClient.SIZE);
-
+//        MsgCodec codec = new ProtostuffCodec();
+//        byte[] bytes = codec.encode(command);
+//
         long seqId = idGen.genId();
-        buf.writeLong(seqId);
+//        List<byte[]> packDatas = PackUtils.buildPackData(seqId, bytes, TaskClient.SIZE);
+//
+//        Assert.isTrue(packDatas.size() == 1);
+//        byte[] commandByte = packDatas.get(0);
+//        ByteBuf buf = Unpooled.buffer(commandByte.length);
+//        buf.writeBytes(commandByte);
 
-        Codec codec = new ProtostuffCodec();
-        byte[] bytes = codec.encode(TaskCommand.class, command);
-        buf.writeBytes(bytes);
+        Signal<TaskCommand> signal = new Signal<TaskCommand>(command);
+        signal.setSeqId(seqId);
+
 
         Channel channel = TaskClientContext.sessionChannelMap.get(sessionKey);
-        channel.writeAndFlush(buf);
+        channel.writeAndFlush(signal);
+
         SendFuture sendFutrue = new SendFutrueImpl();
-
-
         TaskClientContext.placeSessionResult(sessionKey, seqId, sendFutrue);
-
         return handleResult(sessionKey, seqId);
     }
 
     private static <T> T handleResult(String sessionKey, long seqId) {
         SendFuture sendFutrue = TaskClientContext.getSessionResult(sessionKey, seqId);
-
-        byte[] bytes = sendFutrue.get();
-        Codec codec = new ProtostuffCodec();
-
-        RpcResult result = codec.decode(RpcResult.class, bytes);
-        LOG.debug("client channel read result:" + result.getResult());
-
-        return (T) result;
+//        LOG.debug("client channel read result:" + result.getResult());
+        return sendFutrue.get();
     }
 
     public String getSessionKey() {

@@ -4,7 +4,7 @@ import java.lang.reflect.Method;
 import java.util.concurrent.Callable;
 
 import com.baidu.unbiz.devlib.cache.AtomicComputeCache;
-import com.baidu.unbiz.multiengine.codec.Codec;
+import com.baidu.unbiz.multiengine.codec.MsgCodec;
 import com.baidu.unbiz.multiengine.exception.CodecException;
 import com.google.protobuf.GeneratedMessage;
 
@@ -13,7 +13,7 @@ import com.google.protobuf.GeneratedMessage;
  * Function: protobuf序列化器，利用反射缓存<tt>method</tt>来进行调用
  *
  */
-public class ProtobufCodec implements Codec {
+public class ProtobufCodec implements MsgCodec {
 
     /**
      * Protobuf生成原生Java代码中的方法解码方法名称
@@ -53,8 +53,9 @@ public class ProtobufCodec implements Codec {
 
 
     @Override
-    public <T> byte[] encode(final Class<T> clazz, T object) throws CodecException {
+    public <T> byte[] encode(T object) throws CodecException {
         try {
+            final Class<?> clazz = object.getClass();
             Method m = PROTOBUF_METHOD_CACHE.getComputeResult(clazz.getName() + METHOD_NAME_TOBYTE,
                     new Callable<Method>() {
                         @Override

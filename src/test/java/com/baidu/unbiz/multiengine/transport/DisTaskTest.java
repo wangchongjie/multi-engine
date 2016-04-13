@@ -1,5 +1,7 @@
 package com.baidu.unbiz.multiengine.transport;
 
+import java.util.concurrent.CountDownLatch;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -59,6 +61,129 @@ public class DisTaskTest {
 
         Assert.notNull(result);
         System.out.println(result.getResult());
+    }
+
+    @Test
+    public void testRunDisTaskByManyTimes() {
+        HostConf hostConf = new HostConf();
+
+        TaskServer taskServer = TaskServerFactory.createTaskServer(hostConf);
+        taskServer.start();
+        dumySleep(500);
+
+        final TaskClient taskClient = TaskClientFactory.createTaskClient(hostConf);
+        taskClient.start();
+        dumySleep(500);
+
+        for (int i = 0; i < 50; i++) {
+            TaskCommand command = new TaskCommand();
+            command.setTaskBean("deviceStatFetcher");
+            command.setParams(null);
+            RpcResult result = taskClient.makeCall(command);
+
+            Assert.notNull(result);
+            System.out.println(result.getResult());
+        }
+    }
+
+    @Test
+    public void testRunDisTaskByBigDataByManyTimes() {
+        HostConf hostConf = new HostConf();
+
+        TaskServer taskServer = TaskServerFactory.createTaskServer(hostConf);
+        taskServer.start();
+        dumySleep(500);
+
+        final TaskClient taskClient = TaskClientFactory.createTaskClient(hostConf);
+        taskClient.start();
+        dumySleep(500);
+
+        for (int i = 0; i < 10; i++) {
+            TaskCommand command = new TaskCommand();
+            command.setTaskBean("deviceBigDataStatFetcher");
+            command.setParams(null);
+            RpcResult result = taskClient.makeCall(command);
+
+            Assert.notNull(result);
+            System.out.println(result.getResult());
+        }
+
+    }
+
+    @Test
+    public void testRunDisTaskByMultiThread() {
+
+        HostConf hostConf = new HostConf();
+
+        TaskServer taskServer = TaskServerFactory.createTaskServer(hostConf);
+        taskServer.start();
+        dumySleep(500);
+
+        final TaskClient taskClient = TaskClientFactory.createTaskClient(hostConf);
+        taskClient.start();
+        dumySleep(500);
+
+        final CountDownLatch latch = new CountDownLatch(50);
+
+        for (int i = 0; i < 50; i++) {
+            new Thread() {
+                @Override
+                public void run() {
+                    TaskCommand command = new TaskCommand();
+                    command.setTaskBean("deviceBigDataStatFetcher");
+                    command.setParams(null);
+                    RpcResult result = taskClient.makeCall(command);
+
+                    Assert.notNull(result);
+                    System.out.println(result.getResult());
+                    latch.countDown();
+                }
+            }.start();
+        }
+
+        try {
+            latch.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void testRunDisTaskByBigDataByMultiThread() {
+
+        HostConf hostConf = new HostConf();
+
+        TaskServer taskServer = TaskServerFactory.createTaskServer(hostConf);
+        taskServer.start();
+        dumySleep(500);
+
+        final TaskClient taskClient = TaskClientFactory.createTaskClient(hostConf);
+        taskClient.start();
+        dumySleep(500);
+
+        final CountDownLatch latch = new CountDownLatch(50);
+
+        for (int i = 0; i < 50; i++) {
+            new Thread() {
+                @Override
+                public void run() {
+                    TaskCommand command = new TaskCommand();
+                    command.setTaskBean("deviceBigDataStatFetcher");
+                    command.setParams(null);
+                    RpcResult result = taskClient.makeCall(command);
+
+                    Assert.notNull(result);
+                    System.out.println(result.getResult());
+                    latch.countDown();
+                }
+            }.start();
+        }
+
+        try {
+            latch.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     @Test

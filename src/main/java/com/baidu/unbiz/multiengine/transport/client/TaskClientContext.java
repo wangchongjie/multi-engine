@@ -13,14 +13,15 @@ import io.netty.channel.Channel;
 public class TaskClientContext {
 
     static ConcurrentHashMap<String, Channel> sessionChannelMap = new ConcurrentHashMap<String, Channel>();
-    private static Map<String, ConcurrentHashMap<Long, SendFuture>> sessionResultMap =
+    private static ConcurrentHashMap<String, ConcurrentHashMap<Long, SendFuture>> sessionResultMap =
             new ConcurrentHashMap<String, ConcurrentHashMap<Long, SendFuture>>();
 
     public static void placeSessionResult(String sessionKey, Long seqId, SendFuture futrue) {
         ConcurrentHashMap<Long, SendFuture> resultMap = sessionResultMap.get(sessionKey);
         if (resultMap == null) {
             resultMap = new ConcurrentHashMap<Long, SendFuture>();
-            sessionResultMap.put(sessionKey, resultMap);
+            sessionResultMap.putIfAbsent(sessionKey, resultMap);
+            resultMap = sessionResultMap.get(sessionKey);
         }
         resultMap.put(seqId, futrue);
     }

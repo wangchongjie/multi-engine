@@ -1,7 +1,7 @@
 package com.baidu.unbiz.multiengine.codec.impl;
 
 import com.baidu.unbiz.devlib.reflection.ReflectionUtil;
-import com.baidu.unbiz.multiengine.codec.Codec;
+import com.baidu.unbiz.multiengine.codec.MsgCodec;
 import com.baidu.unbiz.multiengine.exception.CodecException;
 import com.dyuproject.protostuff.LinkedBuffer;
 import com.dyuproject.protostuff.ProtobufIOUtil;
@@ -12,7 +12,7 @@ import com.dyuproject.protostuff.runtime.RuntimeSchema;
  * ClassName: ProtobufCodec <br/>
  * Function: protobuf序列化器，利用反射缓存<tt>method</tt>来进行调用
  */
-public class ProtostuffCodec implements Codec {
+public class ProtostuffCodec implements MsgCodec {
 
     /**
      * 设置编码规则
@@ -43,7 +43,7 @@ public class ProtostuffCodec implements Codec {
     }
 
     @Override
-    public <T> byte[] encode(final Class<T> clazz, T object) throws CodecException {
+    public <T> byte[] encode(T object) throws CodecException {
         try {
             @SuppressWarnings("unchecked")
             com.dyuproject.protostuff.Schema<T> schema =

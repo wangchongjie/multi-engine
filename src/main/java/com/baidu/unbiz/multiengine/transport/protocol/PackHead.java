@@ -1,6 +1,5 @@
 package com.baidu.unbiz.multiengine.transport.protocol;
 
-import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
@@ -17,10 +16,15 @@ public final class PackHead {
     /**
      * session内顺序Id
      */
-    private long seqId = 0;
+    private long seqId;
 
     /**
-     *  int (4) head后数据的总长度
+     *  int (4) 数据的总长度
+     */
+    private int sumLen;
+
+    /**
+     *  int (4) 当前包的数据长度
      */
     private int bodyLen;
 
@@ -29,8 +33,7 @@ public final class PackHead {
      */
     private int remainLen;
 
-
-    public static final int SIZE = 16;
+    public static final int SIZE = 20;
     private static String DEF_ENCODING = "GBK";
 
 
@@ -38,8 +41,9 @@ public final class PackHead {
 
     }
 
-    private PackHead(long seqId, int bodyLen, int remainLen) {
+    private PackHead(long seqId, int sumLen, int bodyLen, int remainLen) {
         this.seqId = seqId;
+        this.sumLen = sumLen;
         this.bodyLen = bodyLen;
         this.remainLen = remainLen;
     }
@@ -63,6 +67,7 @@ public final class PackHead {
 
         try {
             bb.putLong(seqId);
+            bb.putInt(sumLen);
             bb.putInt(bodyLen);
             bb.putInt(remainLen);
         } catch (Exception e) {
@@ -82,6 +87,7 @@ public final class PackHead {
         ByteBuffer buffer = ByteBuffer.wrap(headBytes);
         buffer.order(ByteOrder.LITTLE_ENDIAN);
         head.seqId = buffer.getLong();
+        head.sumLen = buffer.getInt();
         head.bodyLen = buffer.getInt();
         head.remainLen = buffer.getInt();
         return head;
@@ -95,12 +101,12 @@ public final class PackHead {
         this.remainLen = remainLen;
     }
 
-    public int getBodyLen() {
-        return bodyLen;
+    public int getSumLen() {
+        return sumLen;
     }
 
-    public void setBodyLen(int bodyLen) {
-        this.bodyLen = bodyLen;
+    public void setSumLen(int sumLen) {
+        this.sumLen = sumLen;
     }
 
     public long getSeqId() {
@@ -111,6 +117,13 @@ public final class PackHead {
         this.seqId = seqId;
     }
 
+    public int getBodyLen() {
+        return bodyLen;
+    }
+
+    public void setBodyLen(int bodyLen) {
+        this.bodyLen = bodyLen;
+    }
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);

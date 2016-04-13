@@ -5,7 +5,7 @@ import com.baidu.unbiz.multiengine.exception.CodecException;
 /**
  * Created by wangchongjie on 16/4/5.
  */
-public interface Codec {
+public interface MsgCodec {
     /**
      * 反序列化
      *
@@ -21,12 +21,10 @@ public interface Codec {
     /**
      * 序列化
      *
-     * @param clazz
-     *            待序列化的类定义
      * @param object
      *            待序列化的对象
      * @return 字节码
      * @throws CodecException
      */
-    <T> byte[] encode(Class<T> clazz, T object) throws CodecException;
+    <T> byte[] encode(T object) throws CodecException;
 }

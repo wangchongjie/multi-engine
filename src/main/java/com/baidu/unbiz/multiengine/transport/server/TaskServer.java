@@ -3,6 +3,8 @@ package com.baidu.unbiz.multiengine.transport.server;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.baidu.unbiz.multiengine.codec.DefaultByteCodecFactory;
+import com.baidu.unbiz.multiengine.codec.impl.ProtostuffCodec;
 import com.baidu.unbiz.multiengine.transport.HostConf;
 
 import io.netty.bootstrap.ServerBootstrap;
@@ -53,6 +55,9 @@ public final class TaskServer {
             sslCtx = null;
         }
 
+        final DefaultByteCodecFactory codecFactory = new DefaultByteCodecFactory();
+        codecFactory.setMsgCodec(new ProtostuffCodec());
+
         // Configure the server.
         EventLoopGroup bossGroup = new NioEventLoopGroup(1);
         EventLoopGroup workerGroup = new NioEventLoopGroup();
@@ -65,12 +70,14 @@ public final class TaskServer {
                     .childHandler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         public void initChannel(SocketChannel ch) throws Exception {
-                            ChannelPipeline p = ch.pipeline();
+                            ChannelPipeline pipeline = ch.pipeline();
                             if (sslCtx != null) {
-                                p.addLast(sslCtx.newHandler(ch.alloc()));
+                                pipeline.addLast(sslCtx.newHandler(ch.alloc()));
                             }
-                            //p.addLast(new LoggingHandler(LogLevel.INFO));
-                            p.addLast(new TaskServerHandler());
+                            pipeline.addLast("decoder", codecFactory.getDecoder());
+                            pipeline.addLast("encoder", codecFactory.getEncoder());
+                            // pipeline.addLast(new LoggingHandler(LogLevel.INFO));
+                            pipeline.addLast(new TaskServerHandler());
                         }
                     });
 
