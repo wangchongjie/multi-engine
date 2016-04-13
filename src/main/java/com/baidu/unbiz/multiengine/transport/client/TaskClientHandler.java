@@ -57,6 +57,8 @@ public class TaskClientHandler extends ChannelInboundHandlerAdapter {
             PackHead packHead = PackHead.fromBytes(headBytes);
 
             byte[] bodyBytes = new byte[buf.readableBytes()];
+            LOG.debug("channelRead buf.readableBytes:" + buf.readableBytes());
+            System.out.println("channelRead buf.readableBytes:" + buf.readableBytes());;
             buf.readBytes(bodyBytes);
 
             this.fillResult(packHead, bodyBytes);
@@ -73,6 +75,7 @@ public class TaskClientHandler extends ChannelInboundHandlerAdapter {
                 byte[] dataByte = (byte[]) data;
                 byte[] tailByte = (byte[]) tail;
                 int index = dataByte.length - head.getRemainLen() - tailByte.length;
+                System.out.println("index:" + index);
                 System.arraycopy(tail, 0, data, index, tailByte.length);
             }
 

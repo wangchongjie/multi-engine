@@ -67,9 +67,9 @@ public class TaskServerHandler extends ContextAwareInboundHandler {
             for (byte[] packByte : packBytes) {
                 ByteBuf part = Unpooled.buffer(packByte.length);
                 part.writeBytes(packByte);
-                ctx.write(part);
+                ctx.writeAndFlush(part);
             }
-            ctx.flush();
+//            ctx.flush();
 //            ReferenceCountUtil.release(buf);
         }
     }
@@ -88,7 +88,7 @@ public class TaskServerHandler extends ContextAwareInboundHandler {
         }
         List<byte[]> dataList = new ArrayList<byte[]>();
 
-        int remainSize = countRemainSize(buf.length, packSize);
+        int remainSize = countRemainSize(buf.length, packSize - PackHead.SIZE);
         int bodyLength = buf.length;
         int index = 0;
         do {
@@ -111,7 +111,7 @@ public class TaskServerHandler extends ContextAwareInboundHandler {
 //            bbf.flip();
 
             index += packLength - PackHead.SIZE;
-            remainSize = countRemainSize(buf.length - index, packSize);
+            remainSize = countRemainSize(buf.length - index, packSize - PackHead.SIZE);
             dataList.add(pack);
         } while (index < bodyLength);
 
