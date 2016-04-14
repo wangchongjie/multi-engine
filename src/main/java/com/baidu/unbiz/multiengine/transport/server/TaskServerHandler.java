@@ -3,14 +3,12 @@ package com.baidu.unbiz.multiengine.transport.server;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.baidu.unbiz.multiengine.dto.RpcResult;
 import com.baidu.unbiz.multiengine.dto.Signal;
 import com.baidu.unbiz.multiengine.dto.TaskCommand;
 import com.baidu.unbiz.multitask.common.TaskPair;
 import com.baidu.unbiz.multitask.task.ParallelExePool;
 import com.baidu.unbiz.multitask.task.thread.MultiResult;
 
-import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -27,62 +25,24 @@ public class TaskServerHandler extends ContextAwareInboundHandler {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
-
         if (msg instanceof Signal) {
-            // decode command
-            Signal signal = (Signal) msg;
-            TaskCommand command = (TaskCommand) signal.getMessage();
-
-            // execute command
-            ParallelExePool parallelExePool = bean("simpleParallelExePool");
-            MultiResult results = parallelExePool.submit(new TaskPair(command.getTaskBean(), command.getParams()));
-
-            Object response = results.getResult(command.getTaskBean());
-            RpcResult result = RpcResult.newInstance().setResult(response);
-
-            Signal<RpcResult> resultSignal = new Signal<RpcResult>(result);
-            resultSignal.setSeqId(signal.getSeqId());
-
-            ctx.writeAndFlush(resultSignal);
+            handleSignal(ctx, (Signal) msg);
         }
+    }
 
-        if (msg instanceof ByteBuf) {
+    private void handleSignal(ChannelHandlerContext ctx, Signal signal) {
 
-//            // decode command
-//            ByteBuf buf = (ByteBuf) msg;
-//
-//            byte[] headBytes = new byte[MsgHead.SIZE];
-//            buf.readBytes(headBytes);
-//            MsgHead packHead = MsgHead.fromBytes(headBytes);
-//
-//            System.out.println("sumLen:" + packHead.getSumLen() + "|"+packHead.getSeqId()+"|"+packHead.getRemainLen());
-//            Assert.isTrue(packHead.getSumLen() == packHead.getBodyLen());
-//
-//            byte[] bodyBytes = new byte[packHead.getBodyLen()];
-//            buf.readBytes(bodyBytes);
-//
-//            MsgCodec codec = new ProtostuffCodec();
-//            TaskCommand command = codec.decode(TaskCommand.class, bodyBytes);
-//            LOG.debug("channel read task:" + command);
-//
-//            // execute command
-//            ParallelExePool parallelExePool = bean("simpleParallelExePool");
-//            MultiResult results = parallelExePool.submit(new TaskPair(command.getTaskBean(), command.getParams()));
-//
-//            Object response = results.getResult(command.getTaskBean());
-//            RpcResult result = RpcResult.newInstance().setResult(response);
-//
-//            // send result to client
-//            byte[] resBodyBytes = codec.encode(result);
-//            List<byte[]> packBytes = PackUtils.buildPackData(packHead.getSeqId(), resBodyBytes, buf.capacity());
-//
-//
-//            for (byte[] packByte : packBytes) {
-//                ByteBuf part = Unpooled.buffer(packByte.length);
-//                part.writeBytes(packByte);
-//                ctx.writeAndFlush(part);
-//            }
-        }
+        TaskCommand command = (TaskCommand) signal.getMessage();
+
+        // execute command
+        ParallelExePool parallelExePool = bean("simpleParallelExePool");
+        MultiResult results = parallelExePool.submit(new TaskPair(command.getTaskBean(), command.getParams()));
+
+        Object response = results.getResult(command.getTaskBean());
+        Signal<Object> resultSignal = new Signal<Object>(response);
+        resultSignal.setSeqId(signal.getSeqId());
+
+        ctx.writeAndFlush(resultSignal);
     }
 
     @Override

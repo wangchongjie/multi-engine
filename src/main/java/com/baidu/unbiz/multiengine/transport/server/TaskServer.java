@@ -5,7 +5,6 @@ import org.apache.commons.logging.LogFactory;
 
 import com.baidu.unbiz.multiengine.codec.bytebuf.DefaultByteCodecFactory;
 import com.baidu.unbiz.multiengine.codec.common.MsgHeadCodec;
-import com.baidu.unbiz.multiengine.codec.common.NsHeadCodec;
 import com.baidu.unbiz.multiengine.codec.common.ProtostuffCodec;
 import com.baidu.unbiz.multiengine.transport.HostConf;
 

@@ -1,5 +1,6 @@
 package com.baidu.unbiz.multiengine.transport;
 
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 import org.junit.Test;
@@ -8,12 +9,12 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.util.Assert;
 
-import com.baidu.unbiz.multiengine.dto.RpcResult;
 import com.baidu.unbiz.multiengine.dto.TaskCommand;
 import com.baidu.unbiz.multiengine.transport.client.TaskClient;
 import com.baidu.unbiz.multiengine.transport.client.TaskClientFactory;
 import com.baidu.unbiz.multiengine.transport.server.TaskServer;
 import com.baidu.unbiz.multiengine.transport.server.TaskServerFactory;
+import com.baidu.unbiz.multiengine.vo.DeviceViewItem;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/applicationContext-test.xml")
@@ -35,10 +36,10 @@ public class DisTaskTest {
         TaskCommand command = new TaskCommand();
         command.setTaskBean("deviceStatFetcher");
         command.setParams(null);
-        RpcResult result = taskClient.makeCall(command);
+        List<DeviceViewItem> result = taskClient.makeCall(command);
 
         Assert.notNull(result);
-        System.out.println(result.getResult());
+        System.out.println(result);
     }
 
     @Test
@@ -57,37 +58,16 @@ public class DisTaskTest {
         TaskCommand command = new TaskCommand();
         command.setTaskBean("deviceBigDataStatFetcher");
         command.setParams(null);
-        RpcResult result = taskClient.makeCall(command);
+        List<DeviceViewItem> result = taskClient.makeCall(command);
 
         Assert.notNull(result);
-        System.out.println(result.getResult());
+        System.out.println(result);
     }
 
-    @Test
-    public void testRunDisTaskByManyTimes() {
-        HostConf hostConf = new HostConf();
-
-        TaskServer taskServer = TaskServerFactory.createTaskServer(hostConf);
-        taskServer.start();
-        dumySleep(500);
-
-        final TaskClient taskClient = TaskClientFactory.createTaskClient(hostConf);
-        taskClient.start();
-        dumySleep(500);
-
-        for (int i = 0; i < 50; i++) {
-            TaskCommand command = new TaskCommand();
-            command.setTaskBean("deviceStatFetcher");
-            command.setParams(null);
-            RpcResult result = taskClient.makeCall(command);
-
-            Assert.notNull(result);
-            System.out.println(result.getResult());
-        }
-    }
 
     @Test
-    public void testRunDisTaskByBigDataByManyTimes() {
+    public void testRunDisTasksByBigData() {
+
         HostConf hostConf = new HostConf();
 
         TaskServer taskServer = TaskServerFactory.createTaskServer(hostConf);
@@ -102,16 +82,16 @@ public class DisTaskTest {
             TaskCommand command = new TaskCommand();
             command.setTaskBean("deviceBigDataStatFetcher");
             command.setParams(null);
-            RpcResult result = taskClient.makeCall(command);
+            List<DeviceViewItem> result = taskClient.makeCall(command);
 
             Assert.notNull(result);
-            System.out.println(result.getResult());
+            System.out.println(result);
         }
 
     }
 
     @Test
-    public void testRunDisTaskByMultiThread() {
+    public void testConcurrentRunDisTask() {
 
         HostConf hostConf = new HostConf();
 
@@ -132,10 +112,10 @@ public class DisTaskTest {
                     TaskCommand command = new TaskCommand();
                     command.setTaskBean("deviceBigDataStatFetcher");
                     command.setParams(null);
-                    RpcResult result = taskClient.makeCall(command);
+                    Object result = taskClient.makeCall(command);
 
                     Assert.notNull(result);
-                    System.out.println(result.getResult());
+                    System.out.println(result);
                     latch.countDown();
                 }
             }.start();
@@ -149,7 +129,7 @@ public class DisTaskTest {
     }
 
     @Test
-    public void testRunDisTaskByBigDataByMultiThread() {
+    public void testConcurrentRunDisTaskByBigData() {
 
         HostConf hostConf = new HostConf();
 
@@ -170,10 +150,10 @@ public class DisTaskTest {
                     TaskCommand command = new TaskCommand();
                     command.setTaskBean("deviceBigDataStatFetcher");
                     command.setParams(null);
-                    RpcResult result = taskClient.makeCall(command);
+                    Object result = taskClient.makeCall(command);
 
                     Assert.notNull(result);
-                    System.out.println(result.getResult());
+                    System.out.println(result);
                     latch.countDown();
                 }
             }.start();
@@ -205,8 +185,8 @@ public class DisTaskTest {
         command.setTaskBean("deviceStatFetcher");
         command.setParams(null);
 
-        RpcResult result1 = taskClient1.makeCall(command);
-        RpcResult result2 = taskClient2.makeCall(command);
+        Object result1 = taskClient1.makeCall(command);
+        Object result2 = taskClient2.makeCall(command);
 
         for (int i = 0; i < 500; i++) {
             result1 = taskClient1.makeCall(command);
@@ -216,8 +196,8 @@ public class DisTaskTest {
 
         Assert.notNull(result1);
         Assert.notNull(result2);
-        System.out.println(result1.getResult());
-        System.out.println(result2.getResult());
+        System.out.println(result1);
+        System.out.println(result2);
     }
 
     private void dumySleep(long time) {

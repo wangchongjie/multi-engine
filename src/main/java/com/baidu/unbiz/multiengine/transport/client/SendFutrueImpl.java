@@ -43,11 +43,13 @@ class SendFutrueImpl implements SendFuture {
         }
     }
 
+    @Override
     public void set(Object result) {
         this.result = result;
         internalWaiter.countDown();
     }
 
+    @Override
     public void append(Object result, AppendHandler handler, boolean finish) {
         if (!hasInit) {
             this.result = handler.init();

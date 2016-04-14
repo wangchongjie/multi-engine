@@ -6,7 +6,7 @@ import java.util.List;
 import org.junit.Test;
 
 import com.baidu.unbiz.multiengine.codec.common.ProtostuffCodec;
-import com.baidu.unbiz.multiengine.dto.RpcParam;
+import com.baidu.unbiz.multiengine.dto.Signal;
 import com.baidu.unbiz.multiengine.vo.DeviceViewItem;
 
 /**
@@ -19,14 +19,13 @@ public class CodecTest {
         MsgCodec codec = new ProtostuffCodec();
 
         List<DeviceViewItem> dataList = mockList();
-
-        RpcParam params = RpcParam.newInstance().setParams(dataList);
+        Signal params = new Signal(dataList);
 
         byte[] bytes = codec.encode(params);
         System.out.println(bytes);
 
-        RpcParam data = codec.decode(RpcParam.class, bytes);
-        System.out.println(data.getParams());
+        Signal data = codec.decode(Signal.class, bytes);
+        System.out.println(data);
     }
 
 

@@ -1,10 +1,8 @@
 package com.baidu.unbiz.multiengine.transport.client;
 
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
 import org.springframework.util.Assert;
-
+import com.baidu.unbiz.multiengine.dto.Signal;
 import io.netty.channel.Channel;
 
 /**
@@ -24,6 +22,10 @@ public class TaskClientContext {
             resultMap = sessionResultMap.get(sessionKey);
         }
         resultMap.put(seqId, futrue);
+    }
+
+    public static void fillSessionResult(String sessionKey, Signal signal) {
+        fillSessionResult(sessionKey, signal.getSeqId(), signal.getMessage());
     }
 
     public static void fillSessionResult(String sessionKey, Long seqId, Object result) {
