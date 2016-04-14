@@ -17,7 +17,6 @@ public class CodecTest {
     @Test
     public void testProtostuffCodec(){
         MsgCodec codec = new ProtostuffCodec();
-
         List<DeviceViewItem> dataList = mockList();
         Signal params = new Signal(dataList);
 
