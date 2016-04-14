@@ -42,6 +42,8 @@ public class AbstractTaskClient {
     protected SequenceIdGen idGen;
 
     protected void doStart() throws Exception {
+
+
         // Configure SSL.git
         final SslContext sslCtx;
         if (hostConf.isSsl()) {
@@ -81,12 +83,16 @@ public class AbstractTaskClient {
             // keep channel in context
             TaskClientContext.sessionChannelMap.put(sessionKey, f.channel());
 
+            this.callbackPostInit();
             // Wait until the connection is closed.
             f.channel().closeFuture().sync();
         } finally {
             // Shut down the event loop to terminate all threads.
             group.shutdownGracefully();
         }
+    }
+
+    public void callbackPostInit() {
     }
 
     public String getSessionKey() {

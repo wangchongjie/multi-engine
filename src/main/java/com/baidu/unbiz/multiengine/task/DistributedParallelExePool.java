@@ -27,8 +27,6 @@ import com.baidu.unbiz.multitask.task.thread.WorkUnit;
 @Component
 public class DistributedParallelExePool extends SimpleParallelExePool {
 
-    private TaskClient taskClient;
-
     public MultiResult submit(Executor executor, ExecutePolicy policy, TaskPair... taskPairs) {
         List<TaskPair> localTaskPairs = new ArrayList<TaskPair>();
         List<TaskPair> disTaskPairs = new ArrayList<TaskPair>();
@@ -56,6 +54,7 @@ public class DistributedParallelExePool extends SimpleParallelExePool {
 
         for (TaskPair taskPair : disTaskPairs) {
             TaskCommand command = new TaskCommand(taskPair);
+            TaskClient taskClient  = EndpointPool.selectEndpoint();
             futures.put(taskPair.field1 , taskClient.asynCall(command));
         }
 
@@ -65,13 +64,5 @@ public class DistributedParallelExePool extends SimpleParallelExePool {
             context.putResult(future.getKey(), future.getValue().get());
         }
         return context;
-    }
-
-    public TaskClient getTaskClient() {
-        return taskClient;
-    }
-
-    public void setTaskClient(TaskClient taskClient) {
-        this.taskClient = taskClient;
     }
 }

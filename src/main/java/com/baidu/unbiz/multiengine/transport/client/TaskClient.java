@@ -1,5 +1,8 @@
 package com.baidu.unbiz.multiengine.transport.client;
 
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Semaphore;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -13,6 +16,8 @@ public final class TaskClient extends AbstractTaskClient {
 
     private static final Log LOG = LogFactory.getLog(TaskClient.class);
 
+    private CountDownLatch initDone = new CountDownLatch(1);
+
     public void start() {
         final AbstractTaskClient client = this;
         new Thread() {
@@ -25,6 +30,15 @@ public final class TaskClient extends AbstractTaskClient {
                 }
             }
         }.start();
+        try {
+            initDone.await();
+        } catch (InterruptedException e) {
+            // do nothing
+        }
+    }
+
+    public void callbackPostInit() {
+        initDone.countDown();
     }
 
     public <T> T call(TaskCommand command) {

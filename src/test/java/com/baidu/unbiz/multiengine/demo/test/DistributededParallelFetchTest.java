@@ -39,12 +39,9 @@ public class DistributededParallelFetchTest {
 
         TaskServer taskServer = TaskServerFactory.createTaskServer(hostConf);
         taskServer.start();
-        dumySleep(500);
 
         TaskClient taskClient = TaskClientFactory.createTaskClient(hostConf);
         taskClient.start();
-        parallelExePool.setTaskClient(taskClient);
-        dumySleep(500);
     }
 
     /**
@@ -57,16 +54,25 @@ public class DistributededParallelFetchTest {
 
         MultiResult ctx =
                 parallelExePool.submit(
+                        new TaskPair("deviceUvFetcher", DeviceRequest.build(qp)),
+                        new TaskPair("voidParamFetcher", null),
                         new DisTaskPair("deviceStatFetcher", DeviceRequest.build(qp)),
-                        new TaskPair("deviceUvFetcher", DeviceRequest.build(qp)));
+                        new DisTaskPair("deviceBigDataStatFetcher", DeviceRequest.build(qp)));
 
         List<DeviceViewItem> stat = ctx.getResult("deviceStatFetcher");
         List<DeviceViewItem> uv = ctx.getResult("deviceUvFetcher");
+        List<DeviceViewItem> vstat = ctx.getResult("voidParamFetcher");
+        List<DeviceViewItem> bstat = ctx.getResult("deviceBigDataStatFetcher");
 
         Assert.notEmpty(stat);
         Assert.notEmpty(uv);
+        Assert.notEmpty(vstat);
+        Assert.notEmpty(bstat);
+
         System.out.println(stat);
         System.out.println(uv);
+        System.out.println(vstat);
+        System.out.println(bstat);
     }
 
     private void dumySleep(long time) {

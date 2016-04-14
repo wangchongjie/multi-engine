@@ -72,6 +72,7 @@ public class AbstractTaskServer {
             // Start the server.
             ChannelFuture f = b.bind(hostConf.getPort()).sync();
 
+            this.callbackPostInit();
             // Wait until the server socket is closed.
             f.channel().closeFuture().sync();
         } finally {
@@ -79,6 +80,9 @@ public class AbstractTaskServer {
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();
         }
+    }
+
+    public void callbackPostInit() {
     }
 
     public HostConf getHostConf() {
