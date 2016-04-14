@@ -7,7 +7,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
 /**
- * bigpipe nshead 描述
+ * Message head meta
  *
  * @author wangchongjie
  */
@@ -19,14 +19,13 @@ public final class MsgHead {
     private long seqId;
 
     /**
-     *  int (4) 当前包的数据长度
+     * int (4) 当前包的数据长度
      */
     private int bodyLen;
 
     public static final int SIZE = 12;
 
     private static String DEF_ENCODING = "GBK";
-
 
     private MsgHead() {
 
@@ -93,6 +92,7 @@ public final class MsgHead {
     public void setBodyLen(int bodyLen) {
         this.bodyLen = bodyLen;
     }
+
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);

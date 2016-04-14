@@ -14,7 +14,7 @@ import com.baidu.unbiz.multiengine.exception.MultiEngineException;
  *
  * @author wagnchongjie
  */
-class SendFutrueImpl implements SendFuture {
+class SimpleSendFutrue implements SendFuture {
     private final CountDownLatch internalWaiter = new CountDownLatch(1);
 
     /**

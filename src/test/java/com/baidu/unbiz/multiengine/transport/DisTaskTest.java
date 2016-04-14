@@ -10,6 +10,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.util.Assert;
 
 import com.baidu.unbiz.multiengine.dto.TaskCommand;
+import com.baidu.unbiz.multiengine.transport.client.SendFuture;
 import com.baidu.unbiz.multiengine.transport.client.TaskClient;
 import com.baidu.unbiz.multiengine.transport.client.TaskClientFactory;
 import com.baidu.unbiz.multiengine.transport.server.TaskServer;
@@ -22,7 +23,6 @@ public class DisTaskTest {
 
     @Test
     public void testRunDisTask() {
-
         HostConf hostConf = new HostConf();
 
         TaskServer taskServer = TaskServerFactory.createTaskServer(hostConf);
@@ -36,7 +36,29 @@ public class DisTaskTest {
         TaskCommand command = new TaskCommand();
         command.setTaskBean("deviceStatFetcher");
         command.setParams(null);
-        List<DeviceViewItem> result = taskClient.makeCall(command);
+        List<DeviceViewItem> result = taskClient.call(command);
+
+        Assert.notNull(result);
+        System.out.println(result);
+    }
+
+    @Test
+    public void testAsynRunDisTask() {
+        HostConf hostConf = new HostConf();
+
+        TaskServer taskServer = TaskServerFactory.createTaskServer(hostConf);
+        taskServer.start();
+        dumySleep(500);
+
+        TaskClient taskClient = TaskClientFactory.createTaskClient(hostConf);
+        taskClient.start();
+        dumySleep(500);
+
+        TaskCommand command = new TaskCommand();
+        command.setTaskBean("deviceStatFetcher");
+        command.setParams(null);
+        SendFuture sendFuture = taskClient.asynCall(command);
+        List<DeviceViewItem> result = sendFuture.get();
 
         Assert.notNull(result);
         System.out.println(result);
@@ -58,7 +80,7 @@ public class DisTaskTest {
         TaskCommand command = new TaskCommand();
         command.setTaskBean("deviceBigDataStatFetcher");
         command.setParams(null);
-        List<DeviceViewItem> result = taskClient.makeCall(command);
+        List<DeviceViewItem> result = taskClient.call(command);
 
         Assert.notNull(result);
         System.out.println(result);
@@ -66,8 +88,7 @@ public class DisTaskTest {
 
 
     @Test
-    public void testRunDisTasksByBigData() {
-
+    public void testRunDisTasksByBigResult() {
         HostConf hostConf = new HostConf();
 
         TaskServer taskServer = TaskServerFactory.createTaskServer(hostConf);
@@ -82,7 +103,7 @@ public class DisTaskTest {
             TaskCommand command = new TaskCommand();
             command.setTaskBean("deviceBigDataStatFetcher");
             command.setParams(null);
-            List<DeviceViewItem> result = taskClient.makeCall(command);
+            List<DeviceViewItem> result = taskClient.call(command);
 
             Assert.notNull(result);
             System.out.println(result);
@@ -112,7 +133,7 @@ public class DisTaskTest {
                     TaskCommand command = new TaskCommand();
                     command.setTaskBean("deviceBigDataStatFetcher");
                     command.setParams(null);
-                    Object result = taskClient.makeCall(command);
+                    Object result = taskClient.call(command);
 
                     Assert.notNull(result);
                     System.out.println(result);
@@ -129,7 +150,7 @@ public class DisTaskTest {
     }
 
     @Test
-    public void testConcurrentRunDisTaskByBigData() {
+    public void testConcurrentRunDisTaskByBigResult() {
 
         HostConf hostConf = new HostConf();
 
@@ -150,7 +171,7 @@ public class DisTaskTest {
                     TaskCommand command = new TaskCommand();
                     command.setTaskBean("deviceBigDataStatFetcher");
                     command.setParams(null);
-                    Object result = taskClient.makeCall(command);
+                    Object result = taskClient.call(command);
 
                     Assert.notNull(result);
                     System.out.println(result);
@@ -185,12 +206,12 @@ public class DisTaskTest {
         command.setTaskBean("deviceStatFetcher");
         command.setParams(null);
 
-        Object result1 = taskClient1.makeCall(command);
-        Object result2 = taskClient2.makeCall(command);
+        Object result1 = taskClient1.call(command);
+        Object result2 = taskClient2.call(command);
 
         for (int i = 0; i < 500; i++) {
-            result1 = taskClient1.makeCall(command);
-            result2 = taskClient2.makeCall(command);
+            result1 = taskClient1.call(command);
+            result2 = taskClient2.call(command);
             Assert.isTrue(result1.toString().equals(result2.toString()));
         }
 

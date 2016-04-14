@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.baidu.unbiz</groupId>
     <artifactId>multi-engine</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.0</version>
     <packaging>jar</packaging>
     <name>multi-engine</name>
     <description>multi-engine is a Java framework for parallel processing which is based annotation.</description>

@@ -36,11 +36,17 @@ public class TaskClientContext {
     }
 
     public static void appendSessionResult(String sessionKey, Long seqId, Object result,
-                                           SendFutrueImpl.AppendHandler handler, boolean finished) {
+                                           SimpleSendFutrue.AppendHandler handler, boolean finished) {
         ConcurrentHashMap<Long, SendFuture> resultMap = sessionResultMap.get(sessionKey);
 
         SendFuture future = resultMap.get(seqId);
         future.append(result, handler, finished);
+    }
+
+    public static SendFuture removeSessionResult(String sessionKey, Long seqId) {
+        ConcurrentHashMap<Long, SendFuture> resultMap = sessionResultMap.get(sessionKey);
+        Assert.notNull(resultMap);
+        return resultMap.remove(seqId);
     }
 
     public static SendFuture getSessionResult(String sessionKey, Long seqId) {

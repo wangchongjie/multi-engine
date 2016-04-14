@@ -3,6 +3,7 @@ package com.baidu.unbiz.multiengine.dto;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
+import com.baidu.unbiz.multitask.common.TaskPair;
 import com.baidu.unbiz.multitask.task.Params;
 
 /**
@@ -13,6 +14,13 @@ public class TaskCommand {
     private Object params;
 
     private String taskBean;
+
+    public TaskCommand() {}
+
+    public TaskCommand(TaskPair taskPair) {
+        this.taskBean = taskPair.field1;
+        this.params = taskPair.field2;
+    }
 
     public Object getParams() {
         return params;
