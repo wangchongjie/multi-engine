@@ -3,8 +3,10 @@ package com.baidu.unbiz.multiengine.transport.server;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.baidu.unbiz.multiengine.codec.DefaultByteCodecFactory;
-import com.baidu.unbiz.multiengine.codec.impl.ProtostuffCodec;
+import com.baidu.unbiz.multiengine.codec.bytebuf.DefaultByteCodecFactory;
+import com.baidu.unbiz.multiengine.codec.common.MsgHeadCodec;
+import com.baidu.unbiz.multiengine.codec.common.NsHeadCodec;
+import com.baidu.unbiz.multiengine.codec.common.ProtostuffCodec;
 import com.baidu.unbiz.multiengine.transport.HostConf;
 
 import io.netty.bootstrap.ServerBootstrap;
@@ -57,6 +59,7 @@ public final class TaskServer {
 
         final DefaultByteCodecFactory codecFactory = new DefaultByteCodecFactory();
         codecFactory.setMsgCodec(new ProtostuffCodec());
+        codecFactory.setHeadCodec(new MsgHeadCodec());
 
         // Configure the server.
         EventLoopGroup bossGroup = new NioEventLoopGroup(1);

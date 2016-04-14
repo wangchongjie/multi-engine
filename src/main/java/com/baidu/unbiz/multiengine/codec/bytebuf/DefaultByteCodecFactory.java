@@ -1,4 +1,7 @@
-package com.baidu.unbiz.multiengine.codec;
+package com.baidu.unbiz.multiengine.codec.bytebuf;
+
+import com.baidu.unbiz.multiengine.codec.HeadCodec;
+import com.baidu.unbiz.multiengine.codec.MsgCodec;
 
 import io.netty.handler.codec.ByteToMessageDecoder;
 import io.netty.handler.codec.MessageToByteEncoder;
@@ -10,11 +13,13 @@ public class DefaultByteCodecFactory implements ByteCodecFactory {
 
 
     private MsgCodec msgCodec;
+    private HeadCodec headCodec;
 
     @Override
     public MessageToByteEncoder<Object> getEncoder() {
         ByteEncoder encoder = new ByteEncoder();
         encoder.setMessageCodec(msgCodec);
+        encoder.setHeadCodec(headCodec);
         return encoder;
     }
 
@@ -22,11 +27,16 @@ public class DefaultByteCodecFactory implements ByteCodecFactory {
     public ByteToMessageDecoder getDecoder() {
         ByteDecoder decoder = new ByteDecoder();
         decoder.setMessageCodec(msgCodec);
+        decoder.setHeadCodec(headCodec);
         return decoder;
     }
 
     public void setMsgCodec(MsgCodec msgCodec) {
         this.msgCodec = msgCodec;
     }
+    public void setHeadCodec(HeadCodec headCodec) {
+        this.headCodec = headCodec;
+    }
+
 
 }

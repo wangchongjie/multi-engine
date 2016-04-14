@@ -6,14 +6,11 @@ package com.baidu.unbiz.multiengine.transport.client;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.util.Assert;
 
 import com.baidu.unbiz.multiengine.dto.RpcResult;
 import com.baidu.unbiz.multiengine.dto.Signal;
-import com.baidu.unbiz.multiengine.transport.protocol.PackHead;
 import com.baidu.unbiz.multiengine.transport.server.TaskServerHandler;
 
-import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 
@@ -51,44 +48,44 @@ public class TaskClientHandler extends ChannelInboundHandlerAdapter {
             TaskClientContext.fillSessionResult(sessionKey, signal.getSeqId(), result);
         }
 
-        if (msg instanceof ByteBuf) {
-
-            ByteBuf buf = (ByteBuf) msg;
-            byte[] headBytes = new byte[PackHead.SIZE];
-            buf.readBytes(headBytes);
-            PackHead packHead = PackHead.fromBytes(headBytes);
-
-            byte[] bodyBytes = new byte[packHead.getBodyLen()];
-            buf.readBytes(bodyBytes);
-
-            this.fillResult(packHead, bodyBytes);
-        }
+//        if (msg instanceof ByteBuf) {
+//
+//            ByteBuf buf = (ByteBuf) msg;
+//            byte[] headBytes = new byte[MsgHead.SIZE];
+//            buf.readBytes(headBytes);
+//            MsgHead packHead = MsgHead.fromBytes(headBytes);
+//
+//            byte[] bodyBytes = new byte[packHead.getBodyLen()];
+//            buf.readBytes(bodyBytes);
+//
+//            this.fillResult(packHead, bodyBytes);
+//        }
     }
 
-    private void fillResult(final PackHead head, Object result) {
-        boolean finished = (head.getRemainLen() == 0);
-
-        SendFuture.AppendHandler handler = new SendFuture.AppendHandler() {
-            @Override
-            public void append(Object data, Object tail) {
-                byte[] dataByte = (byte[]) data;
-                byte[] tailByte = (byte[]) tail;
-
-                Assert.isTrue(tailByte.length == head.getBodyLen());
-                int index = dataByte.length - head.getRemainLen() - tailByte.length;
-System.out.println(head.getSeqId() + "index:" + index + "|" +dataByte.length + "|"+head.getRemainLen() +"|"+tailByte
-        .length);
-                System.arraycopy(tail, 0, data, index, tailByte.length);
-            }
-
-            @Override
-            public Object init() {
-                return new byte[head.getSumLen()];
-            }
-        };
-
-        TaskClientContext.appendSessionResult(sessionKey, head.getSeqId(), result, handler, finished);
-    }
+//    private void fillResult(final MsgHead head, Object result) {
+//        boolean finished = (head.getRemainLen() == 0);
+//
+//        SendFuture.AppendHandler handler = new SendFuture.AppendHandler() {
+//            @Override
+//            public void append(Object data, Object tail) {
+//                byte[] dataByte = (byte[]) data;
+//                byte[] tailByte = (byte[]) tail;
+//
+//                Assert.isTrue(tailByte.length == head.getBodyLen());
+//                int index = dataByte.length - head.getRemainLen() - tailByte.length;
+//System.out.println(head.getSeqId() + "index:" + index + "|" +dataByte.length + "|"+head.getRemainLen() +"|"+tailByte
+//        .length);
+//                System.arraycopy(tail, 0, data, index, tailByte.length);
+//            }
+//
+//            @Override
+//            public Object init() {
+//                return new byte[head.getSumLen()];
+//            }
+//        };
+//
+//        TaskClientContext.appendSessionResult(sessionKey, head.getSeqId(), result, handler, finished);
+//    }
 
     @Override
     public void channelReadComplete(ChannelHandlerContext ctx) {

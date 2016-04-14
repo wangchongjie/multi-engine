@@ -1,13 +1,17 @@
-package com.baidu.unbiz.multiengine.codec;
+package com.baidu.unbiz.multiengine.codec.bytebuf;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.baidu.unbiz.multiengine.codec.impl.PackHeadCodec;
-import com.baidu.unbiz.multiengine.codec.impl.ProtostuffCodec;
+import com.baidu.unbiz.multiengine.codec.ByteBufCodec;
+import com.baidu.unbiz.multiengine.codec.HeadCodec;
+import com.baidu.unbiz.multiengine.codec.MsgCodec;
+import com.baidu.unbiz.multiengine.codec.common.MsgHeadCodec;
+import com.baidu.unbiz.multiengine.codec.common.ProtostuffCodec;
 import com.baidu.unbiz.multiengine.dto.Signal;
 import com.baidu.unbiz.multiengine.exception.CodecException;
-import com.baidu.unbiz.multiengine.transport.protocol.PackHead;
+import com.baidu.unbiz.multiengine.transport.protocol.MsgHead;
+import com.baidu.unbiz.multiengine.transport.protocol.NSHead;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -18,22 +22,15 @@ import io.netty.handler.codec.MessageToByteEncoder;
  */
 public class ByteEncoder extends MessageToByteEncoder<Object> {
 
-    /**
-     * 日志
-     */
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    /**
-     * 是否开启debug
-     */
-    protected boolean isDebugEnabled;
+    private Class<?> headerClass;
 
     /**
      * ByteBuf的编解码器
      */
     protected ByteBufCodec byteBufCodec = new MsgCodecAdaptor(new ProtostuffCodec());
-
-    protected ByteBufCodec headBufCodec = new MsgCodecAdaptor(new PackHeadCodec());
+    protected ByteBufCodec headBufCodec = new MsgCodecAdaptor(new MsgHeadCodec());
 
     @Override
     protected void encode(ChannelHandlerContext ctx, Object msg, ByteBuf out) throws CodecException {
@@ -53,16 +50,28 @@ public class ByteEncoder extends MessageToByteEncoder<Object> {
     private void encodeSignal(ChannelHandlerContext ctx, Signal<?> msg, ByteBuf out) throws CodecException {
         byte[] bodyBytes = byteBufCodec.encode(msg);
 
-        PackHead header = PackHead.create();
-        header.setSumLen(bodyBytes.length);
-        header.setBodyLen(bodyBytes.length);
-        byte[] headBytes = headBufCodec.encode(header);
+        byte[] headBytes = null;
+        if (this.headerClass.equals(MsgHead.class)) {
+            MsgHead header = MsgHead.create();
+            header.setBodyLen(bodyBytes.length);
+            headBytes = headBufCodec.encode(header);
+        }
+
+        if (this.headerClass.equals(NSHead.class)) {
+            NSHead header = NSHead.factory("multi-engine");
+            header.setBodyLen(bodyBytes.length);
+            headBytes = headBufCodec.encode(header);
+        }
 
         out.writeBytes(headBytes).writeBytes(bodyBytes);
     }
 
-
     public void setMessageCodec(MsgCodec msgCodec) {
         this.byteBufCodec = new MsgCodecAdaptor(msgCodec);
+    }
+
+    public void setHeadCodec(HeadCodec headBufCodec) {
+        this.headBufCodec = new MsgCodecAdaptor(headBufCodec);
+        this.headerClass = headBufCodec.getHeadClass();
     }
 }

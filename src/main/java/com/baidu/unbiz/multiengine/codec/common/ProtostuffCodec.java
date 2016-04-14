@@ -1,4 +1,4 @@
-package com.baidu.unbiz.multiengine.codec.impl;
+package com.baidu.unbiz.multiengine.codec.common;
 
 import com.baidu.unbiz.devlib.reflection.ReflectionUtil;
 import com.baidu.unbiz.multiengine.codec.MsgCodec;

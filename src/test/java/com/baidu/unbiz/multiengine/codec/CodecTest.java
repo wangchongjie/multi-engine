@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.baidu.unbiz.multiengine.codec.impl.ProtostuffCodec;
+import com.baidu.unbiz.multiengine.codec.common.ProtostuffCodec;
 import com.baidu.unbiz.multiengine.dto.RpcParam;
 import com.baidu.unbiz.multiengine.vo.DeviceViewItem;
 

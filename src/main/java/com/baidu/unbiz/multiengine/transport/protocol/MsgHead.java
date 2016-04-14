@@ -11,7 +11,7 @@ import org.apache.commons.lang.builder.ToStringStyle;
  *
  * @author wangchongjie
  */
-public final class PackHead {
+public final class MsgHead {
 
     /**
      * session内顺序Id
@@ -19,41 +19,30 @@ public final class PackHead {
     private long seqId;
 
     /**
-     *  int (4) 数据的总长度
-     */
-    private int sumLen;
-
-    /**
      *  int (4) 当前包的数据长度
      */
     private int bodyLen;
 
-    /**
-     *  int (4) head后数据的总长度
-     */
-    private int remainLen;
+    public static final int SIZE = 12;
 
-    public static final int SIZE = 20;
     private static String DEF_ENCODING = "GBK";
 
 
-    private PackHead() {
+    private MsgHead() {
 
     }
 
-    private PackHead(long seqId, int sumLen, int bodyLen, int remainLen) {
+    private MsgHead(long seqId, int bodyLen) {
         this.seqId = seqId;
-        this.sumLen = sumLen;
         this.bodyLen = bodyLen;
-        this.remainLen = remainLen;
     }
 
-    public static PackHead create() {
-        return new PackHead();
+    public static MsgHead create() {
+        return new MsgHead();
     }
 
-    public static PackHead create(long seqId) {
-        PackHead head = new PackHead();
+    public static MsgHead create(long seqId) {
+        MsgHead head = new MsgHead();
         head.setSeqId(seqId);
         return head;
     }
@@ -67,9 +56,7 @@ public final class PackHead {
 
         try {
             bb.putLong(seqId);
-            bb.putInt(sumLen);
             bb.putInt(bodyLen);
-            bb.putInt(remainLen);
         } catch (Exception e) {
             throw new RuntimeException("exception when putting bytes for nshead...", e);
         }
@@ -79,34 +66,16 @@ public final class PackHead {
     /**
      * 由byte数组解析成PackHead对象
      */
-    public static PackHead fromBytes(byte[] headBytes) {
-        PackHead head = new PackHead();
-        if (headBytes.length < PackHead.SIZE) {
+    public static MsgHead fromBytes(byte[] headBytes) {
+        MsgHead head = new MsgHead();
+        if (headBytes.length < MsgHead.SIZE) {
             throw new RuntimeException("NSHead's size should equal 16.");
         }
         ByteBuffer buffer = ByteBuffer.wrap(headBytes);
         buffer.order(ByteOrder.LITTLE_ENDIAN);
         head.seqId = buffer.getLong();
-        head.sumLen = buffer.getInt();
         head.bodyLen = buffer.getInt();
-        head.remainLen = buffer.getInt();
         return head;
-    }
-
-    public int getRemainLen() {
-        return remainLen;
-    }
-
-    public void setRemainLen(int remainLen) {
-        this.remainLen = remainLen;
-    }
-
-    public int getSumLen() {
-        return sumLen;
-    }
-
-    public void setSumLen(int sumLen) {
-        this.sumLen = sumLen;
     }
 
     public long getSeqId() {

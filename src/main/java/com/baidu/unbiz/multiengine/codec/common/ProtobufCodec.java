@@ -1,4 +1,4 @@
-package com.baidu.unbiz.multiengine.codec.impl;
+package com.baidu.unbiz.multiengine.codec.common;
 
 import java.lang.reflect.Method;
 import java.util.concurrent.Callable;

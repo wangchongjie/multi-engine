@@ -1,24 +1,18 @@
 package com.baidu.unbiz.multiengine.transport.client;
 
-import java.util.List;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.util.Assert;
 
-import com.baidu.unbiz.multiengine.codec.DefaultByteCodecFactory;
-import com.baidu.unbiz.multiengine.codec.MsgCodec;
-import com.baidu.unbiz.multiengine.codec.impl.ProtostuffCodec;
-import com.baidu.unbiz.multiengine.dto.RpcResult;
+import com.baidu.unbiz.multiengine.codec.bytebuf.DefaultByteCodecFactory;
+import com.baidu.unbiz.multiengine.codec.common.MsgHeadCodec;
+import com.baidu.unbiz.multiengine.codec.common.NsHeadCodec;
+import com.baidu.unbiz.multiengine.codec.common.ProtostuffCodec;
 import com.baidu.unbiz.multiengine.dto.Signal;
 import com.baidu.unbiz.multiengine.dto.TaskCommand;
 import com.baidu.unbiz.multiengine.transport.HostConf;
 import com.baidu.unbiz.multiengine.transport.SequenceIdGen;
-import com.baidu.unbiz.multiengine.transport.protocol.PackUtils;
 
 import io.netty.bootstrap.Bootstrap;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -28,8 +22,6 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.logging.LogLevel;
-import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
@@ -75,6 +67,7 @@ public final class TaskClient {
 
         final DefaultByteCodecFactory codecFactory = new DefaultByteCodecFactory();
         codecFactory.setMsgCodec(new ProtostuffCodec());
+        codecFactory.setHeadCodec(new MsgHeadCodec());
 
         // Configure the client.
         EventLoopGroup group = new NioEventLoopGroup();

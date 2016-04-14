@@ -1,7 +1,7 @@
 /**
  * Copyright (C) 2015 Baidu, Inc. All Rights Reserved.
  */
-package com.baidu.unbiz.multiengine.codec;
+package com.baidu.unbiz.multiengine.codec.bytebuf;
 
 import io.netty.handler.codec.ByteToMessageDecoder;
 import io.netty.handler.codec.MessageToByteEncoder;

@@ -1,24 +1,16 @@
 package com.baidu.unbiz.multiengine.transport.server;
 
-import java.util.List;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.util.Assert;
 
-import com.baidu.unbiz.multiengine.codec.MsgCodec;
-import com.baidu.unbiz.multiengine.codec.impl.ProtostuffCodec;
 import com.baidu.unbiz.multiengine.dto.RpcResult;
 import com.baidu.unbiz.multiengine.dto.Signal;
 import com.baidu.unbiz.multiengine.dto.TaskCommand;
-import com.baidu.unbiz.multiengine.transport.protocol.PackHead;
-import com.baidu.unbiz.multiengine.transport.protocol.PackUtils;
 import com.baidu.unbiz.multitask.common.TaskPair;
 import com.baidu.unbiz.multitask.task.ParallelExePool;
 import com.baidu.unbiz.multitask.task.thread.MultiResult;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -59,9 +51,9 @@ public class TaskServerHandler extends ContextAwareInboundHandler {
 //            // decode command
 //            ByteBuf buf = (ByteBuf) msg;
 //
-//            byte[] headBytes = new byte[PackHead.SIZE];
+//            byte[] headBytes = new byte[MsgHead.SIZE];
 //            buf.readBytes(headBytes);
-//            PackHead packHead = PackHead.fromBytes(headBytes);
+//            MsgHead packHead = MsgHead.fromBytes(headBytes);
 //
 //            System.out.println("sumLen:" + packHead.getSumLen() + "|"+packHead.getSeqId()+"|"+packHead.getRemainLen());
 //            Assert.isTrue(packHead.getSumLen() == packHead.getBodyLen());
