@@ -27,11 +27,9 @@ public class DisTaskTest {
 
         TaskServer taskServer = TaskServerFactory.createTaskServer(hostConf);
         taskServer.start();
-        dumySleep(500);
 
         TaskClient taskClient = TaskClientFactory.createTaskClient(hostConf);
         taskClient.start();
-        dumySleep(500);
 
         TaskCommand command = new TaskCommand();
         command.setTaskBean("deviceStatFetcher");
@@ -48,11 +46,9 @@ public class DisTaskTest {
 
         TaskServer taskServer = TaskServerFactory.createTaskServer(hostConf);
         taskServer.start();
-        dumySleep(500);
 
         TaskClient taskClient = TaskClientFactory.createTaskClient(hostConf);
         taskClient.start();
-        dumySleep(500);
 
         TaskCommand command = new TaskCommand();
         command.setTaskBean("deviceStatFetcher");
@@ -71,11 +67,9 @@ public class DisTaskTest {
 
         TaskServer taskServer = TaskServerFactory.createTaskServer(hostConf);
         taskServer.start();
-        dumySleep(500);
 
         TaskClient taskClient = TaskClientFactory.createTaskClient(hostConf);
         taskClient.start();
-        dumySleep(500);
 
         TaskCommand command = new TaskCommand();
         command.setTaskBean("deviceBigDataStatFetcher");
@@ -93,11 +87,9 @@ public class DisTaskTest {
 
         TaskServer taskServer = TaskServerFactory.createTaskServer(hostConf);
         taskServer.start();
-        dumySleep(500);
 
         final TaskClient taskClient = TaskClientFactory.createTaskClient(hostConf);
         taskClient.start();
-        dumySleep(500);
 
         for (int i = 0; i < 10; i++) {
             TaskCommand command = new TaskCommand();
@@ -113,16 +105,13 @@ public class DisTaskTest {
 
     @Test
     public void testConcurrentRunDisTask() {
-
         HostConf hostConf = new HostConf();
 
         TaskServer taskServer = TaskServerFactory.createTaskServer(hostConf);
         taskServer.start();
-        dumySleep(500);
 
         final TaskClient taskClient = TaskClientFactory.createTaskClient(hostConf);
         taskClient.start();
-        dumySleep(500);
 
         final CountDownLatch latch = new CountDownLatch(50);
 
@@ -151,16 +140,13 @@ public class DisTaskTest {
 
     @Test
     public void testConcurrentRunDisTaskByBigResult() {
-
         HostConf hostConf = new HostConf();
 
         TaskServer taskServer = TaskServerFactory.createTaskServer(hostConf);
         taskServer.start();
-        dumySleep(500);
 
         final TaskClient taskClient = TaskClientFactory.createTaskClient(hostConf);
         taskClient.start();
-        dumySleep(500);
 
         final CountDownLatch latch = new CountDownLatch(50);
 
@@ -189,18 +175,15 @@ public class DisTaskTest {
 
     @Test
     public void testRunDisTaskByMultiClient() {
-
         HostConf hostConf = new HostConf();
 
         TaskServer taskServer = TaskServerFactory.createTaskServer(hostConf);
         taskServer.start();
-        dumySleep(500);
 
         TaskClient taskClient1 = TaskClientFactory.createTaskClient(hostConf);
         taskClient1.start();
         TaskClient taskClient2 = TaskClientFactory.createTaskClient(hostConf);
         taskClient2.start();
-        dumySleep(500);
 
         TaskCommand command = new TaskCommand();
         command.setTaskBean("deviceStatFetcher");

@@ -1,4 +1,4 @@
-package com.baidu.unbiz.multiengine.task;
+package com.baidu.unbiz.multiengine.transport;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,7 +6,6 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import com.baidu.unbiz.multiengine.transport.HostConf;
 import com.baidu.unbiz.multiengine.transport.client.TaskClient;
 import com.baidu.unbiz.multiengine.transport.client.TaskClientFactory;
 

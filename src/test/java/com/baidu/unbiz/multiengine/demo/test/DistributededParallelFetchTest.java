@@ -14,15 +14,12 @@ import org.springframework.util.Assert;
 import com.baidu.unbiz.multiengine.common.DisTaskPair;
 import com.baidu.unbiz.multiengine.task.DistributedParallelExePool;
 import com.baidu.unbiz.multiengine.transport.HostConf;
-import com.baidu.unbiz.multiengine.transport.client.TaskClient;
-import com.baidu.unbiz.multiengine.transport.client.TaskClientFactory;
 import com.baidu.unbiz.multiengine.transport.server.TaskServer;
 import com.baidu.unbiz.multiengine.transport.server.TaskServerFactory;
 import com.baidu.unbiz.multiengine.vo.DeviceRequest;
 import com.baidu.unbiz.multiengine.vo.DeviceViewItem;
 import com.baidu.unbiz.multiengine.vo.QueryParam;
 import com.baidu.unbiz.multitask.common.TaskPair;
-import com.baidu.unbiz.multitask.task.ParallelExePool;
 import com.baidu.unbiz.multitask.task.thread.MultiResult;
 
 
@@ -39,9 +36,6 @@ public class DistributededParallelFetchTest {
 
         TaskServer taskServer = TaskServerFactory.createTaskServer(hostConf);
         taskServer.start();
-
-        TaskClient taskClient = TaskClientFactory.createTaskClient(hostConf);
-        taskClient.start();
     }
 
     /**
