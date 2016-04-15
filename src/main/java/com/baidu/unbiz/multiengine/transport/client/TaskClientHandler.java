@@ -4,11 +4,11 @@ package com.baidu.unbiz.multiengine.transport.client;
  * Created by wangchongjie on 16/3/31.
  */
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
 
 import com.baidu.unbiz.multiengine.transport.dto.Signal;
 import com.baidu.unbiz.multiengine.transport.server.TaskServerHandler;
+import com.baidu.unbiz.multitask.log.AopLogFactory;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -20,7 +20,7 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
  */
 public class TaskClientHandler extends ChannelInboundHandlerAdapter {
 
-    private static final Log LOG = LogFactory.getLog(TaskServerHandler.class);
+    private static final Logger LOG = AopLogFactory.getLogger(TaskServerHandler.class);
 
     private String sessionKey;
 

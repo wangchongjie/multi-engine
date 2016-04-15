@@ -20,10 +20,10 @@
 		</layout>
 	</appender>
 
-	<logger name="com.baidu.unbiz" level="INFO" additivity="true">
+	<logger name="com.baidu.unbiz" level="DEBUG" additivity="true">
 	</logger>
 
-	<root level="INFO">
+	<root level="DEBUG">
 		<appender-ref ref="rootLogger" />
 		<appender-ref ref="STDOUT" />
 	</root>

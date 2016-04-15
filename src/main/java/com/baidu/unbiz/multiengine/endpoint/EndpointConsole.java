@@ -2,13 +2,18 @@ package com.baidu.unbiz.multiengine.endpoint;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+
 import com.baidu.unbiz.multiengine.transport.server.TaskServer;
 import com.baidu.unbiz.multiengine.transport.server.TaskServerFactory;
+import com.baidu.unbiz.multitask.log.AopLogFactory;
 
 /**
  * Created by wangchongjie on 16/4/15.
  */
 public class EndpointConsole {
+
+    private static final Logger LOG = AopLogFactory.getLogger(EndpointConsole.class);
 
     private String serverHost;
     private String clientHost;

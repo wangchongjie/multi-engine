@@ -1,13 +1,13 @@
 package com.baidu.unbiz.multiengine.transport.client;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
 
 import com.baidu.unbiz.multiengine.codec.bytebuf.DefaultByteCodecFactory;
 import com.baidu.unbiz.multiengine.codec.common.MsgHeadCodec;
 import com.baidu.unbiz.multiengine.codec.common.ProtostuffCodec;
 import com.baidu.unbiz.multiengine.endpoint.HostConf;
 import com.baidu.unbiz.multiengine.transport.SequenceIdGen;
+import com.baidu.unbiz.multitask.log.AopLogFactory;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
@@ -30,7 +30,7 @@ import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
  */
 public class AbstractTaskClient {
 
-    protected static final Log LOG = LogFactory.getLog(AbstractTaskClient.class);
+    protected static final Logger LOG = AopLogFactory.getLogger(AbstractTaskClient.class);
     protected static final int SIZE = Integer.parseInt(System.getProperty("size", "1024"));
 
     protected HostConf hostConf;
