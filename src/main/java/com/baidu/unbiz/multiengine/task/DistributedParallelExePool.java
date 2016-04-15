@@ -10,7 +10,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Component;
 
 import com.baidu.unbiz.multiengine.common.DisTaskPair;
-import com.baidu.unbiz.multiengine.dto.TaskCommand;
 import com.baidu.unbiz.multiengine.transport.EndpointPool;
 import com.baidu.unbiz.multiengine.transport.client.SendFuture;
 import com.baidu.unbiz.multiengine.transport.client.TaskClient;

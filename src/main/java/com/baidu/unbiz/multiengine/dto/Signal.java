@@ -1,5 +1,8 @@
 package com.baidu.unbiz.multiengine.dto;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
+
 /**
  * Created by wangchongjie on 16/4/13.
  */
@@ -30,4 +33,9 @@ public class Signal<T> {
     public void setSeqId(long seqId) {
         this.seqId = seqId;
     }
+
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+    }
+
 }

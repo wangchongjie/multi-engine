@@ -1,4 +1,4 @@
-package com.baidu.unbiz.multiengine.dto;
+package com.baidu.unbiz.multiengine.task;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;

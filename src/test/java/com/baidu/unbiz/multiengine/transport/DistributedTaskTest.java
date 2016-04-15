@@ -9,7 +9,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.util.Assert;
 
-import com.baidu.unbiz.multiengine.dto.TaskCommand;
+import com.baidu.unbiz.multiengine.task.TaskCommand;
 import com.baidu.unbiz.multiengine.transport.client.SendFuture;
 import com.baidu.unbiz.multiengine.transport.client.TaskClient;
 import com.baidu.unbiz.multiengine.transport.client.TaskClientFactory;
@@ -19,7 +19,7 @@ import com.baidu.unbiz.multiengine.vo.DeviceViewItem;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/applicationContext-test.xml")
-public class DisTaskTest {
+public class DistributedTaskTest {
 
     @Test
     public void testRunDisTask() {

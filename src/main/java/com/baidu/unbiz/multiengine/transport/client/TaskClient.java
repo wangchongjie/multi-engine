@@ -1,13 +1,12 @@
 package com.baidu.unbiz.multiengine.transport.client;
 
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.Semaphore;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.baidu.unbiz.multiengine.dto.Signal;
-import com.baidu.unbiz.multiengine.dto.TaskCommand;
+import com.baidu.unbiz.multiengine.task.TaskCommand;
 import com.baidu.unbiz.multiengine.exception.MultiEngineException;
 
 import io.netty.channel.Channel;
