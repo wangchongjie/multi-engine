@@ -6,11 +6,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import javax.annotation.PostConstruct;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Component;
 
 import com.baidu.unbiz.multiengine.common.DisTaskPair;
-import com.baidu.unbiz.multiengine.transport.EndpointPool;
+import com.baidu.unbiz.multiengine.endpoint.EndpointPool;
 import com.baidu.unbiz.multiengine.transport.client.SendFuture;
 import com.baidu.unbiz.multiengine.transport.client.TaskClient;
 import com.baidu.unbiz.multitask.common.TaskPair;
@@ -60,6 +62,7 @@ public class DistributedParallelExePool extends SimpleParallelExePool {
         for (TaskPair taskPair : disTaskPairs) {
             TaskCommand command = new TaskCommand(taskPair);
             TaskClient taskClient = EndpointPool.selectEndpoint();
+            LOG.debug("submit task to:" + taskClient.getHostConf());
             futures.put(taskPair.field1, taskClient.asynCall(command));
         }
         return context.putAttribute(FUTURES, futures);

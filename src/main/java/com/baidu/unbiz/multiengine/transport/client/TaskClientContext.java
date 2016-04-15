@@ -2,7 +2,7 @@ package com.baidu.unbiz.multiengine.transport.client;
 
 import java.util.concurrent.ConcurrentHashMap;
 import org.springframework.util.Assert;
-import com.baidu.unbiz.multiengine.dto.Signal;
+import com.baidu.unbiz.multiengine.transport.dto.Signal;
 import io.netty.channel.Channel;
 
 /**

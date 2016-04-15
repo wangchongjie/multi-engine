@@ -5,9 +5,9 @@ import java.util.concurrent.CountDownLatch;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.baidu.unbiz.multiengine.dto.Signal;
-import com.baidu.unbiz.multiengine.task.TaskCommand;
 import com.baidu.unbiz.multiengine.exception.MultiEngineException;
+import com.baidu.unbiz.multiengine.task.TaskCommand;
+import com.baidu.unbiz.multiengine.transport.dto.Signal;
 
 import io.netty.channel.Channel;
 
@@ -77,5 +77,4 @@ public final class TaskClient extends AbstractTaskClient {
         TaskClientContext.removeSessionResult(sessionKey, seqId);
         return result;
     }
-
 }

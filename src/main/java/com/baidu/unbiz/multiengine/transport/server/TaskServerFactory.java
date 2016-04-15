@@ -1,6 +1,6 @@
 package com.baidu.unbiz.multiengine.transport.server;
 
-import com.baidu.unbiz.multiengine.transport.HostConf;
+import com.baidu.unbiz.multiengine.endpoint.HostConf;
 
 /**
  * Created by wangchongjie on 16/4/11.

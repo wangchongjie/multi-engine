@@ -10,7 +10,7 @@ import com.baidu.unbiz.multiengine.codec.HeadCodec;
 import com.baidu.unbiz.multiengine.codec.MsgCodec;
 import com.baidu.unbiz.multiengine.codec.common.MsgHeadCodec;
 import com.baidu.unbiz.multiengine.codec.common.ProtostuffCodec;
-import com.baidu.unbiz.multiengine.dto.Signal;
+import com.baidu.unbiz.multiengine.transport.dto.Signal;
 import com.baidu.unbiz.multiengine.exception.CodecException;
 import com.baidu.unbiz.multiengine.transport.protocol.MsgHead;
 import com.baidu.unbiz.multiengine.transport.protocol.NSHead;

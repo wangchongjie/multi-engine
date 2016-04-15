@@ -1,7 +1,7 @@
 package com.baidu.unbiz.multiengine.transport.client;
 
 import com.baidu.unbiz.multiengine.transport.DefaultSessionIdProvider;
-import com.baidu.unbiz.multiengine.transport.HostConf;
+import com.baidu.unbiz.multiengine.endpoint.HostConf;
 import com.baidu.unbiz.multiengine.transport.SequenceIdGen;
 import com.baidu.unbiz.multiengine.transport.SessionIdProvider;
 

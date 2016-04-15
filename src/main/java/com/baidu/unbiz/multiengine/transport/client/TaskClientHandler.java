@@ -7,7 +7,7 @@ package com.baidu.unbiz.multiengine.transport.client;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.baidu.unbiz.multiengine.dto.Signal;
+import com.baidu.unbiz.multiengine.transport.dto.Signal;
 import com.baidu.unbiz.multiengine.transport.server.TaskServerHandler;
 
 import io.netty.channel.ChannelHandlerContext;

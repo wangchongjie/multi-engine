@@ -7,7 +7,7 @@ import org.junit.Test;
 
 import com.baidu.unbiz.multiengine.codec.common.JsonCodec;
 import com.baidu.unbiz.multiengine.codec.common.ProtostuffCodec;
-import com.baidu.unbiz.multiengine.dto.Signal;
+import com.baidu.unbiz.multiengine.transport.dto.Signal;
 import com.baidu.unbiz.multiengine.vo.DeviceViewItem;
 
 /**

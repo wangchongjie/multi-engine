@@ -1,5 +1,6 @@
 package com.baidu.unbiz.multiengine.demo.test;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -13,8 +14,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.util.Assert;
 
 import com.baidu.unbiz.multiengine.common.DisTaskPair;
+import com.baidu.unbiz.multiengine.endpoint.EndpointPool;
 import com.baidu.unbiz.multiengine.task.DistributedParallelExePool;
-import com.baidu.unbiz.multiengine.transport.HostConf;
+import com.baidu.unbiz.multiengine.endpoint.HostConf;
 import com.baidu.unbiz.multiengine.transport.server.TaskServer;
 import com.baidu.unbiz.multiengine.transport.server.TaskServerFactory;
 import com.baidu.unbiz.multiengine.vo.DeviceRequest;
@@ -22,7 +24,6 @@ import com.baidu.unbiz.multiengine.vo.DeviceViewItem;
 import com.baidu.unbiz.multiengine.vo.QueryParam;
 import com.baidu.unbiz.multitask.common.TaskPair;
 import com.baidu.unbiz.multitask.task.thread.MultiResult;
-
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/applicationContext-test.xml")
@@ -33,26 +34,12 @@ public class DistributededParallelFetchTest {
 
     private TaskServer taskServer;
 
-    @Before
-    public void init() {
-        HostConf hostConf = new HostConf();
-        taskServer = TaskServerFactory.createTaskServer(hostConf);
-        taskServer.start();
-    }
-
-    @After
-    public void clean() {
-        taskServer.stop();
-    }
-
     /**
      * 测试分布式并行执行task
      */
     @Test
     public void testDistributedParallelRunDisTask() {
         QueryParam qp = new QueryParam();
-        new TaskPair("deviceStatFetcher", DeviceRequest.build(qp));
-
         MultiResult ctx =
                 parallelExePool.submit(
                         new TaskPair("deviceUvFetcher", DeviceRequest.build(qp)),
@@ -74,6 +61,34 @@ public class DistributededParallelFetchTest {
         System.out.println(uv);
         System.out.println(vstat);
         System.out.println(bstat);
+    }
+
+    /**
+     * 测试分布式并行执行task
+     */
+    @Test
+    public void testDistributedParallelRunDisTask2() {
+        for (int i = 0; i < 20; i++) {
+            this.testDistributedParallelRunDisTask();
+        }
+    }
+
+    @Before
+    public void init() {
+        List<HostConf> hostConfs = new ArrayList<HostConf>();
+        for (int i = 8007; i < 8012; i++) {
+            HostConf hostConf = new HostConf();
+            hostConf.setPort(i);
+            hostConfs.add(hostConf);
+            taskServer = TaskServerFactory.createTaskServer(hostConf);
+            taskServer.start();
+        }
+        EndpointPool.init(hostConfs);
+    }
+
+    @After
+    public void clean() {
+        taskServer.stop();
     }
 
 }

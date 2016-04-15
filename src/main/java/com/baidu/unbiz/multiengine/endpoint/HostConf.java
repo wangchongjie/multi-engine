@@ -1,4 +1,7 @@
-package com.baidu.unbiz.multiengine.transport;
+package com.baidu.unbiz.multiengine.endpoint;
+
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 
 /**
  * Created by wangchongjie on 16/4/11.
@@ -40,4 +43,9 @@ public class HostConf {
     public void setSsl(boolean ssl) {
         this.ssl = ssl;
     }
+
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+    }
+
 }

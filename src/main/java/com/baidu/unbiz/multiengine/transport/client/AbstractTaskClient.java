@@ -6,7 +6,7 @@ import org.apache.commons.logging.LogFactory;
 import com.baidu.unbiz.multiengine.codec.bytebuf.DefaultByteCodecFactory;
 import com.baidu.unbiz.multiengine.codec.common.MsgHeadCodec;
 import com.baidu.unbiz.multiengine.codec.common.ProtostuffCodec;
-import com.baidu.unbiz.multiengine.transport.HostConf;
+import com.baidu.unbiz.multiengine.endpoint.HostConf;
 import com.baidu.unbiz.multiengine.transport.SequenceIdGen;
 
 import io.netty.bootstrap.Bootstrap;
