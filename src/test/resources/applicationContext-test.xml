@@ -13,7 +13,7 @@
 
     <context:component-scan base-package="com.baidu.unbiz"/>
 
-    <bean name="endpointConsole" class="com.baidu.unbiz.multiengine.endpoint.EndpointConsole"
+    <bean name="endpointConsole" class="com.baidu.unbiz.multiengine.endpoint.EndpointSupervisor"
           init-method="init" destroy-method="stop">
         <property name="serverHost" value="127.0.0.1:8801;127.0.0.1:8802"/>
         <property name="clientHost" value="127.0.0.1:8801;127.0.0.1:8802;127.0.0.1:8803"/>

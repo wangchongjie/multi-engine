@@ -1,12 +1,12 @@
 package com.baidu.unbiz.multiengine.codec.bytebuf;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
 
 import com.baidu.unbiz.multiengine.codec.ByteBufCodec;
 import com.baidu.unbiz.multiengine.codec.MsgCodec;
 import com.baidu.unbiz.multiengine.exception.CodecException;
 import com.baidu.unbiz.multiengine.utils.BufferUtils;
+import com.baidu.unbiz.multitask.log.AopLogFactory;
 
 import io.netty.buffer.ByteBuf;
 
@@ -15,7 +15,7 @@ import io.netty.buffer.ByteBuf;
  */
 public class MsgCodecAdaptor implements ByteBufCodec {
 
-    private static final Log LOG = LogFactory.getLog(MsgCodecAdaptor.class);
+    private static final Logger LOG = AopLogFactory.getLogger(MsgCodecAdaptor.class);
 
     /**
      * 消息编解码器

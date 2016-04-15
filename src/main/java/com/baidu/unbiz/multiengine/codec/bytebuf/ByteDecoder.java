@@ -3,17 +3,17 @@ package com.baidu.unbiz.multiengine.codec.bytebuf;
 import java.util.List;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.baidu.unbiz.multiengine.codec.ByteBufCodec;
 import com.baidu.unbiz.multiengine.codec.HeadCodec;
 import com.baidu.unbiz.multiengine.codec.MsgCodec;
 import com.baidu.unbiz.multiengine.codec.common.MsgHeadCodec;
 import com.baidu.unbiz.multiengine.codec.common.ProtostuffCodec;
-import com.baidu.unbiz.multiengine.transport.dto.Signal;
 import com.baidu.unbiz.multiengine.exception.CodecException;
+import com.baidu.unbiz.multiengine.transport.dto.Signal;
 import com.baidu.unbiz.multiengine.transport.protocol.MsgHead;
 import com.baidu.unbiz.multiengine.transport.protocol.NSHead;
+import com.baidu.unbiz.multitask.log.AopLogFactory;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -24,7 +24,7 @@ import io.netty.handler.codec.ReplayingDecoder;
  */
 public class ByteDecoder extends ReplayingDecoder<Object> {
 
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected final Logger LOG = AopLogFactory.getLogger(this.getClass());
 
     private Class<?> headerClass;
 

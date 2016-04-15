@@ -3,18 +3,18 @@ package com.baidu.unbiz.multiengine.transport.client;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
 
 import com.baidu.unbiz.multiengine.exception.MultiEngineException;
 import com.baidu.unbiz.multiengine.task.TaskCommand;
 import com.baidu.unbiz.multiengine.transport.dto.Signal;
+import com.baidu.unbiz.multitask.log.AopLogFactory;
 
 import io.netty.channel.Channel;
 
 public final class TaskClient extends AbstractTaskClient {
 
-    private static final Log LOG = LogFactory.getLog(TaskClient.class);
+    private static final Logger LOG = AopLogFactory.getLogger(TaskClient.class);
 
     private CountDownLatch initDone = new CountDownLatch(1);
     private AtomicBoolean success = new AtomicBoolean(true);
@@ -50,6 +50,7 @@ public final class TaskClient extends AbstractTaskClient {
     }
 
     public void callbackOnException(Exception e) {
+        LOG.error("client start fail:", e);
         success.set(false);
         initDone.countDown();
     }

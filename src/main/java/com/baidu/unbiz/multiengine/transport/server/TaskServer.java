@@ -3,16 +3,13 @@ package com.baidu.unbiz.multiengine.transport.server;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
 
-import com.baidu.unbiz.multiengine.transport.client.TaskClientContext;
-
-import io.netty.channel.Channel;
+import com.baidu.unbiz.multitask.log.AopLogFactory;
 
 public final class TaskServer extends AbstractTaskServer {
 
-    private static final Log LOG = LogFactory.getLog(TaskServer.class);
+    private static final Logger LOG = AopLogFactory.getLogger(TaskServer.class);
 
     private CountDownLatch initDone = new CountDownLatch(1);
     private AtomicBoolean success = new AtomicBoolean(true);

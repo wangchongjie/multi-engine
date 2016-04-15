@@ -11,7 +11,6 @@ import io.netty.handler.codec.MessageToByteEncoder;
  */
 public class DefaultByteCodecFactory implements ByteCodecFactory {
 
-
     private MsgCodec msgCodec;
     private HeadCodec headCodec;
 

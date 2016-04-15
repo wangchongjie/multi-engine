@@ -1,12 +1,12 @@
 package com.baidu.unbiz.multiengine.transport.server;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
 
 import com.baidu.unbiz.multiengine.codec.bytebuf.DefaultByteCodecFactory;
 import com.baidu.unbiz.multiengine.codec.common.MsgHeadCodec;
 import com.baidu.unbiz.multiengine.codec.common.ProtostuffCodec;
 import com.baidu.unbiz.multiengine.endpoint.HostConf;
+import com.baidu.unbiz.multitask.log.AopLogFactory;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
@@ -29,7 +29,7 @@ import io.netty.handler.ssl.util.SelfSignedCertificate;
  */
 public class AbstractTaskServer {
 
-    private static final Log LOG = LogFactory.getLog(AbstractTaskServer.class);
+    private static final Logger LOG = AopLogFactory.getLogger(AbstractTaskServer.class);
 
     private HostConf hostConf;
 
