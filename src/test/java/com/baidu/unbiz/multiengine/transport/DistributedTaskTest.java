@@ -163,9 +163,10 @@ public class DistributedTaskTest {
         final TaskClient taskClient = TaskClientFactory.createTaskClient(hostConf);
         taskClient.start();
 
-        final CountDownLatch latch = new CountDownLatch(50);
+        final int loopCnt = 50;
+        final CountDownLatch latch = new CountDownLatch(loopCnt);
 
-        for (int i = 0; i < 50; i++) {
+        for (int i = 0; i < loopCnt; i++) {
             new Thread() {
                 @Override
                 public void run() {

@@ -1,5 +1,9 @@
 package com.baidu.unbiz.multiengine.endpoint;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
@@ -18,6 +22,20 @@ public class HostConf {
     public HostConf(String host, int port){
         this.host = host;
         this.port = port;
+    }
+
+    public static List<HostConf> resolveHost(String hosts) {
+        List<HostConf> hostConfs = new ArrayList<HostConf>();
+        if (StringUtils.isEmpty(hosts)) {
+            return hostConfs;
+        }
+        String[] hostStrs = hosts.split(";");
+        for (String host : hostStrs) {
+            String ip = host.replaceAll(":.*", "");
+            String port = host.replaceAll(".*:", "");
+            hostConfs.add(new HostConf(ip, Integer.parseInt(port)));
+        }
+        return hostConfs;
     }
 
     public int getPort() {

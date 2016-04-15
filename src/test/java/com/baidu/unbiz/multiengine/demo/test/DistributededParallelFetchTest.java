@@ -1,12 +1,10 @@
 package com.baidu.unbiz.multiengine.demo.test;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 import javax.annotation.Resource;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -14,15 +12,11 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.util.Assert;
 
 import com.baidu.unbiz.multiengine.common.DisTaskPair;
-import com.baidu.unbiz.multiengine.endpoint.EndpointPool;
-import com.baidu.unbiz.multiengine.task.DistributedParallelExePool;
-import com.baidu.unbiz.multiengine.endpoint.HostConf;
-import com.baidu.unbiz.multiengine.transport.server.TaskServer;
-import com.baidu.unbiz.multiengine.transport.server.TaskServerFactory;
 import com.baidu.unbiz.multiengine.vo.DeviceRequest;
 import com.baidu.unbiz.multiengine.vo.DeviceViewItem;
 import com.baidu.unbiz.multiengine.vo.QueryParam;
 import com.baidu.unbiz.multitask.common.TaskPair;
+import com.baidu.unbiz.multitask.task.ParallelExePool;
 import com.baidu.unbiz.multitask.task.thread.MultiResult;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -30,9 +24,7 @@ import com.baidu.unbiz.multitask.task.thread.MultiResult;
 public class DistributededParallelFetchTest {
 
     @Resource(name = "distributedParallelExePool")
-    private DistributedParallelExePool parallelExePool;
-
-    private TaskServer taskServer;
+    private ParallelExePool parallelExePool;
 
     /**
      * 测试分布式并行执行task
@@ -67,28 +59,25 @@ public class DistributededParallelFetchTest {
      * 测试分布式并行执行task
      */
     @Test
-    public void testDistributedParallelRunDisTask2() {
-        for (int i = 0; i < 20; i++) {
-            this.testDistributedParallelRunDisTask();
-        }
-    }
+    public void testConcurrentDistributedParallelRunDisTask() {
+        final int loopCnt = 100;
+        final CountDownLatch latch = new CountDownLatch(loopCnt);
 
-    @Before
-    public void init() {
-        List<HostConf> hostConfs = new ArrayList<HostConf>();
-        for (int i = 8007; i < 8012; i++) {
-            HostConf hostConf = new HostConf();
-            hostConf.setPort(i);
-            hostConfs.add(hostConf);
-            taskServer = TaskServerFactory.createTaskServer(hostConf);
-            taskServer.start();
+        for (int i = 0; i < loopCnt; i++) {
+            new Thread() {
+                @Override
+                public void run() {
+                    testDistributedParallelRunDisTask();
+                    latch.countDown();
+                }
+            }.start();
         }
-        EndpointPool.init(hostConfs);
-    }
 
-    @After
-    public void clean() {
-        taskServer.stop();
+        try {
+            latch.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
 }

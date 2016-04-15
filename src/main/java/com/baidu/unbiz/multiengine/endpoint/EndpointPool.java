@@ -41,6 +41,15 @@ public class EndpointPool {
         }
     }
 
+    public static void stop() {
+        if (CollectionUtils.isEmpty(pool)) {
+            return;
+        }
+        for (TaskClient client : pool) {
+            client.stop();
+        }
+    }
+
     public static TaskClient selectEndpoint() {
         try {
             hasInit.await();

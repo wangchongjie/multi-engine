@@ -13,6 +13,12 @@
 
     <context:component-scan base-package="com.baidu.unbiz"/>
 
+    <bean name="endpointConsole" class="com.baidu.unbiz.multiengine.endpoint.EndpointConsole"
+          init-method="init" destroy-method="stop">
+        <property name="serverHost" value="127.0.0.1:8801;127.0.0.1:8802;127.0.0.1:8803"/>
+        <property name="clientHost" value="127.0.0.1:8801;127.0.0.1:8802;127.0.0.1:8803"/>
+    </bean>
+
     <!-- 显式配置线程执行环境，可选择性覆盖 -->
     <!--
     <bean name="xmlThreadPoolConfig" class="com.baidu.unbiz.multienginene.constants.XmlThreadPoolConfig">
