@@ -5,6 +5,10 @@ import java.util.concurrent.CountDownLatch;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.baidu.unbiz.multiengine.transport.client.TaskClientContext;
+
+import io.netty.channel.Channel;
+
 public final class TaskServer extends AbstractTaskServer {
 
     private static final Log LOG = LogFactory.getLog(TaskServer.class);
@@ -28,6 +32,13 @@ public final class TaskServer extends AbstractTaskServer {
         } catch (InterruptedException e) {
             // do nothing
         }
+    }
+
+    public void stop() {
+        if (channel == null) {
+            return;
+        }
+        channel.close();
     }
 
     public void callbackPostInit() {

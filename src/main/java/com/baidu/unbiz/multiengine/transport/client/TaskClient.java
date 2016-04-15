@@ -18,6 +18,14 @@ public final class TaskClient extends AbstractTaskClient {
 
     private CountDownLatch initDone = new CountDownLatch(1);
 
+    public void stop() {
+        Channel channel = TaskClientContext.sessionChannelMap.get(sessionKey);
+        if (channel == null) {
+            return;
+        }
+        channel.close();
+    }
+
     public void start() {
         final AbstractTaskClient client = this;
         new Thread() {

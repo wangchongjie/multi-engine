@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,12 +31,18 @@ public class DistributededParallelFetchTest {
     @Resource(name = "distributedParallelExePool")
     private DistributedParallelExePool parallelExePool;
 
+    private TaskServer taskServer;
+
     @Before
     public void init() {
         HostConf hostConf = new HostConf();
-
-        TaskServer taskServer = TaskServerFactory.createTaskServer(hostConf);
+        taskServer = TaskServerFactory.createTaskServer(hostConf);
         taskServer.start();
+    }
+
+    @After
+    public void clean() {
+        taskServer.stop();
     }
 
     /**
@@ -69,11 +76,4 @@ public class DistributededParallelFetchTest {
         System.out.println(bstat);
     }
 
-    private void dumySleep(long time) {
-        try {
-            Thread.sleep(time);
-        } catch (InterruptedException e) {
-            // do nothing
-        }
-    }
 }

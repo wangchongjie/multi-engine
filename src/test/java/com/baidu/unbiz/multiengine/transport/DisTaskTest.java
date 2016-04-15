@@ -38,6 +38,9 @@ public class DisTaskTest {
 
         Assert.notNull(result);
         System.out.println(result);
+
+        taskClient.stop();
+        taskServer.stop();
     }
 
     @Test
@@ -58,6 +61,9 @@ public class DisTaskTest {
 
         Assert.notNull(result);
         System.out.println(result);
+
+        taskClient.stop();
+        taskServer.stop();
     }
 
     @Test
@@ -78,6 +84,9 @@ public class DisTaskTest {
 
         Assert.notNull(result);
         System.out.println(result);
+
+        taskClient.stop();
+        taskServer.stop();
     }
 
 
@@ -101,6 +110,8 @@ public class DisTaskTest {
             System.out.println(result);
         }
 
+        taskClient.stop();
+        taskServer.stop();
     }
 
     @Test
@@ -136,6 +147,9 @@ public class DisTaskTest {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
+        taskClient.stop();
+        taskServer.stop();
     }
 
     @Test
@@ -171,6 +185,9 @@ public class DisTaskTest {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
+        taskClient.stop();
+        taskServer.stop();
     }
 
     @Test
@@ -202,6 +219,10 @@ public class DisTaskTest {
         Assert.notNull(result2);
         System.out.println(result1);
         System.out.println(result2);
+
+        taskClient1.stop();
+        taskClient2.stop();
+        taskServer.stop();
     }
 
     private void dumySleep(long time) {

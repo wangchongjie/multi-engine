@@ -9,6 +9,7 @@ import com.baidu.unbiz.multiengine.codec.common.ProtostuffCodec;
 import com.baidu.unbiz.multiengine.transport.HostConf;
 
 import io.netty.bootstrap.ServerBootstrap;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
@@ -31,6 +32,8 @@ public class AbstractTaskServer {
     private static final Log LOG = LogFactory.getLog(AbstractTaskServer.class);
 
     private HostConf hostConf;
+
+    protected Channel channel;
 
     protected void doStart() throws Exception {
         // Configure SSL.
@@ -71,6 +74,7 @@ public class AbstractTaskServer {
 
             // Start the server.
             ChannelFuture f = b.bind(hostConf.getPort()).sync();
+            this.channel = f.channel();
 
             this.callbackPostInit();
             // Wait until the server socket is closed.
