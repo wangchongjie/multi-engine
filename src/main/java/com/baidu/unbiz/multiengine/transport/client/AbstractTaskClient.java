@@ -39,7 +39,6 @@ public class AbstractTaskClient {
 
     protected void doStart() throws Exception {
 
-
         // Configure SSL.git
         final SslContext sslCtx;
         if (hostConf.isSsl()) {
@@ -82,10 +81,15 @@ public class AbstractTaskClient {
             this.callbackPostInit();
             // Wait until the connection is closed.
             f.channel().closeFuture().sync();
+        } catch (Exception e) {
+            callbackOnException(e);
         } finally {
             // Shut down the event loop to terminate all threads.
             group.shutdownGracefully();
         }
+    }
+
+    public void callbackOnException(Exception e) {
     }
 
     public void callbackPostInit() {

@@ -1,6 +1,7 @@
 package com.baidu.unbiz.multiengine.transport.server;
 
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -14,8 +15,9 @@ public final class TaskServer extends AbstractTaskServer {
     private static final Log LOG = LogFactory.getLog(TaskServer.class);
 
     private CountDownLatch initDone = new CountDownLatch(1);
+    private AtomicBoolean success = new AtomicBoolean(true);
 
-    public void start() {
+    public boolean start() {
         final TaskServer server = this;
         new Thread() {
             @Override
@@ -30,8 +32,9 @@ public final class TaskServer extends AbstractTaskServer {
         try {
             initDone.await();
         } catch (InterruptedException e) {
-            // do nothing
+            success.set(false);
         }
+        return success.get();
     }
 
     public void stop() {
@@ -42,6 +45,11 @@ public final class TaskServer extends AbstractTaskServer {
     }
 
     public void callbackPostInit() {
+        initDone.countDown();
+    }
+
+    public void callbackOnException(Exception e) {
+        success.set(false);
         initDone.countDown();
     }
 }

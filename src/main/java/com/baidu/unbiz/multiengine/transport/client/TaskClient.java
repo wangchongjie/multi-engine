@@ -1,6 +1,7 @@
 package com.baidu.unbiz.multiengine.transport.client;
 
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -16,6 +17,7 @@ public final class TaskClient extends AbstractTaskClient {
     private static final Log LOG = LogFactory.getLog(TaskClient.class);
 
     private CountDownLatch initDone = new CountDownLatch(1);
+    private AtomicBoolean success = new AtomicBoolean(true);
 
     public void stop() {
         Channel channel = TaskClientContext.sessionChannelMap.get(sessionKey);
@@ -25,7 +27,7 @@ public final class TaskClient extends AbstractTaskClient {
         channel.close();
     }
 
-    public void start() {
+    public boolean start() {
         final AbstractTaskClient client = this;
         new Thread() {
             @Override
@@ -33,15 +35,23 @@ public final class TaskClient extends AbstractTaskClient {
                 try {
                     client.doStart();
                 } catch (Exception e) {
-                    LOG.error("client run fail:", e);
+                    LOG.error("client start fail:", e);
                 }
             }
         }.start();
+
         try {
             initDone.await();
         } catch (InterruptedException e) {
-            // do nothing
+            LOG.error("client await fail:" + client.getHostConf());
+            success.set(false);
         }
+        return success.get();
+    }
+
+    public void callbackOnException(Exception e) {
+        success.set(false);
+        initDone.countDown();
     }
 
     public void callbackPostInit() {

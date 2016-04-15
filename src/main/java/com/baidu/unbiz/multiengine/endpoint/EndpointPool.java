@@ -35,9 +35,10 @@ public class EndpointPool {
             throw new MultiEngineException("serverList is empty");
         }
         for (HostConf hostConf : serverList) {
-            TaskClient taskClient = clientFactory.createTaskClient(hostConf);
-            taskClient.start();
-            pool.add(taskClient);
+            TaskClient endpoint = clientFactory.createTaskClient(hostConf);
+            if (endpoint.start()) {
+                pool.add(endpoint);
+            }
         }
     }
 

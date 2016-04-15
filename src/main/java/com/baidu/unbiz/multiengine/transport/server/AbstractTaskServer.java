@@ -79,11 +79,16 @@ public class AbstractTaskServer {
             this.callbackPostInit();
             // Wait until the server socket is closed.
             f.channel().closeFuture().sync();
+        } catch (Exception e) {
+            callbackOnException(e);
         } finally {
             // Shut down all event loops to terminate all threads.
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();
         }
+    }
+
+    public void callbackOnException(Exception e) {
     }
 
     public void callbackPostInit() {
