@@ -14,6 +14,8 @@ import com.baidu.unbiz.multitask.log.AopLogFactory;
 public class EndpointSupervisor {
     private static final Logger LOG = AopLogFactory.getLogger(EndpointSupervisor.class);
 
+    private static final Logger LOG = AopLogFactory.getLogger(EndpointConsole.class);
+
     private String serverHost;
     private String clientHost;
     private TaskServer taskServer;
