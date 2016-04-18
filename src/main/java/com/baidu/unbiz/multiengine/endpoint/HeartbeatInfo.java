@@ -3,15 +3,15 @@ package com.baidu.unbiz.multiengine.endpoint;
 /**
  * Created by wangchongjie on 16/4/18.
  */
-public class HeartbeatInfo2 {
+public class HeartbeatInfo {
     public final long DEFAULT_TIMEOUT = 5 * 1000L;
 
     private long timeout = DEFAULT_TIMEOUT;
 
-    public HeartbeatInfo2() {
+    public HeartbeatInfo() {
     }
 
-    public HeartbeatInfo2(long timeout) {
+    public HeartbeatInfo(long timeout) {
         this.timeout = timeout;
     }
 
@@ -24,6 +24,6 @@ public class HeartbeatInfo2 {
     }
 
     public static class Holder {
-        public static final HeartbeatInfo2 instance = new HeartbeatInfo2();
+        public static final HeartbeatInfo instance = new HeartbeatInfo();
     }
 }
