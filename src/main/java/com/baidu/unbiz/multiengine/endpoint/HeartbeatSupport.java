@@ -42,7 +42,7 @@ public abstract class HeartbeatSupport {
             if(taskClient.isInvalid()) {
                 tryRestartEndpoint(taskClient);
             }
-            boolean isAlive = taskClient.heartBeat(HeartBeatInfo.Holder.instance);
+            boolean isAlive = taskClient.heartBeat(HeartbeatInfo2.Holder.instance);
             boolean invalid = taskClient.getInvalid().getAndSet(!isAlive);
             if (isAlive == invalid) {
                 LOG.info(String.format("%s change alive to:%s", taskClient.getHostConf(), isAlive));
