@@ -8,8 +8,9 @@ import org.apache.commons.lang.builder.ToStringStyle;
  */
 public class Signal<T> {
 
-    private long seqId;
-    private T message;
+    protected long seqId;
+    protected T message;
+    protected SignalType type = SignalType.TASK_COMMOND;
 
     public Signal() {
     }
@@ -38,4 +39,11 @@ public class Signal<T> {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
     }
 
+    public SignalType getType() {
+        return type;
+    }
+
+    public void setType(SignalType type) {
+        this.type = type;
+    }
 }

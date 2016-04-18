@@ -1,11 +1,12 @@
 package com.baidu.unbiz.multiengine.transport.server;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
 
-import com.baidu.unbiz.multiengine.transport.dto.Signal;
 import com.baidu.unbiz.multiengine.task.TaskCommand;
+import com.baidu.unbiz.multiengine.transport.dto.Signal;
+import com.baidu.unbiz.multiengine.transport.dto.SignalType;
 import com.baidu.unbiz.multitask.common.TaskPair;
+import com.baidu.unbiz.multitask.log.AopLogFactory;
 import com.baidu.unbiz.multitask.task.ParallelExePool;
 import com.baidu.unbiz.multitask.task.thread.MultiResult;
 
@@ -18,7 +19,7 @@ import io.netty.channel.ChannelHandlerContext;
 @Sharable
 public class TaskServerHandler extends ContextAwareInboundHandler {
 
-    private static final Log LOG = LogFactory.getLog(TaskServerHandler.class);
+    private static final Logger LOG = AopLogFactory.getLogger(TaskServerHandler.class);
 
     public TaskServerHandler() {
     }
@@ -31,7 +32,18 @@ public class TaskServerHandler extends ContextAwareInboundHandler {
     }
 
     private void handleSignal(ChannelHandlerContext ctx, Signal signal) {
+        if (SignalType.HEART_BEAT.equals(signal.getType())) {
+            handleHeartBeat(ctx, signal);
+            return;
+        }
 
+        if (SignalType.TASK_COMMOND.equals(signal.getType())) {
+            handleTaskCommand(ctx, signal);
+            return;
+        }
+    }
+
+    private void handleTaskCommand(ChannelHandlerContext ctx, Signal signal) {
         TaskCommand command = (TaskCommand) signal.getMessage();
 
         // execute command
@@ -43,6 +55,12 @@ public class TaskServerHandler extends ContextAwareInboundHandler {
         resultSignal.setSeqId(signal.getSeqId());
 
         ctx.writeAndFlush(resultSignal);
+    }
+
+    private void handleHeartBeat(ChannelHandlerContext ctx, Signal signal) {
+        // echo heat beat
+        ctx.writeAndFlush(signal);
+        LOG.debug("heart beat echo：" + signal);
     }
 
     @Override

@@ -57,7 +57,7 @@ public class DistributedTaskTest {
         TaskCommand command = new TaskCommand();
         command.setTaskBean("deviceStatFetcher");
         command.setParams(null);
-        SendFuture sendFuture = taskClient.asynCall(command);
+        SendFuture sendFuture = taskClient.asyncCall(command);
         List<DeviceViewItem> result = sendFuture.get();
 
         Assert.notNull(result);

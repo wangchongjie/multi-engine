@@ -1,15 +1,21 @@
 package com.baidu.unbiz.multiengine.transport.client;
 
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
 import org.slf4j.Logger;
 
 import com.baidu.unbiz.multiengine.codec.bytebuf.DefaultByteCodecFactory;
 import com.baidu.unbiz.multiengine.codec.common.MsgHeadCodec;
 import com.baidu.unbiz.multiengine.codec.common.ProtostuffCodec;
 import com.baidu.unbiz.multiengine.endpoint.HostConf;
+import com.baidu.unbiz.multiengine.exception.MultiEngineException;
 import com.baidu.unbiz.multiengine.transport.SequenceIdGen;
+import com.baidu.unbiz.multiengine.transport.dto.Signal;
 import com.baidu.unbiz.multitask.log.AopLogFactory;
 
 import io.netty.bootstrap.Bootstrap;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
@@ -87,6 +93,70 @@ public class AbstractTaskClient {
             // Shut down the event loop to terminate all threads.
             group.shutdownGracefully();
         }
+    }
+
+    protected <T> T syncSend(Object request) {
+        SendFuture future = asyncSend(request);
+        if (future instanceof IdentitySendFuture) {
+            return waitResponse(((IdentitySendFuture) future).getId());
+        }
+        throw new MultiEngineException("support IdentitySendFuture only");
+    }
+
+    protected <T> T syncSend(Object request, long timeout, TimeUnit unit)
+            throws TimeoutException, InterruptedException {
+        SendFuture future = asyncSend(request);
+        if (future instanceof IdentitySendFuture) {
+            return waitResponse(((IdentitySendFuture) future).getId(), timeout, unit);
+        }
+        throw new MultiEngineException("support IdentitySendFuture only");
+    }
+
+
+
+    protected SendFuture asyncSend(Object request) {
+        Signal signal = checkAndWrapSignal(request);
+
+        Channel channel = TaskClientContext.sessionChannelMap.get(sessionKey);
+        channel.writeAndFlush(signal);
+
+        long seqId = signal.getSeqId();
+        SendFuture sendFutrue = new IdentitySendFuture(seqId);
+
+        TaskClientContext.placeSessionResult(sessionKey, seqId, sendFutrue);
+        return sendFutrue;
+    }
+
+    private <T> Signal<T> checkAndWrapSignal(T request) {
+        Signal signal;
+        if (request instanceof Signal) {
+            signal = (Signal) request;
+            signal.setSeqId(idGen.genId());
+        } else {
+            signal = doWrapSignal(request);
+        }
+        return signal;
+    }
+
+    private <T> Signal<T> doWrapSignal(T request) {
+        long seqId = idGen.genId();
+        Signal<T> signal = new Signal<T>(request);
+        signal.setSeqId(seqId);
+        return signal;
+    }
+
+    private <T> T waitResponse(long seqId) {
+        SendFuture sendFutrue = TaskClientContext.getSessionResult(sessionKey, seqId);
+        T result = (T) sendFutrue.get();
+        TaskClientContext.removeSessionResult(sessionKey, seqId);
+        return result;
+    }
+
+    private <T> T waitResponse(long seqId, long timeout, TimeUnit unit) throws TimeoutException, InterruptedException {
+        SendFuture sendFutrue = TaskClientContext.getSessionResult(sessionKey, seqId);
+        T result = (T) sendFutrue.get(timeout, unit);
+        TaskClientContext.removeSessionResult(sessionKey, seqId);
+        return result;
     }
 
     public void callbackOnException(Exception e) {

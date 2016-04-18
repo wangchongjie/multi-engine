@@ -6,8 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import javax.annotation.PostConstruct;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Component;
 
@@ -65,7 +63,7 @@ public class DistributedParallelExePool extends SimpleParallelExePool {
             TaskCommand command = new TaskCommand(taskPair);
             TaskClient taskClient = EndpointPool.selectEndpoint();
             LOG.debug("submit task to:" + taskClient.getHostConf());
-            futures.put(taskPair.field1, taskClient.asynCall(command));
+            futures.put(taskPair.field1, taskClient.asyncCall(command));
         }
         return context.putAttribute(FUTURES, futures);
     }

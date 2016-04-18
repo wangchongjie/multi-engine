@@ -1,10 +1,11 @@
 package com.baidu.unbiz.multiengine.demo.test;
 
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
 
 import javax.annotation.Resource;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -12,6 +13,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.util.Assert;
 
 import com.baidu.unbiz.multiengine.common.DisTaskPair;
+import com.baidu.unbiz.multiengine.endpoint.EndpointSupervisor;
 import com.baidu.unbiz.multiengine.vo.DeviceRequest;
 import com.baidu.unbiz.multiengine.vo.DeviceViewItem;
 import com.baidu.unbiz.multiengine.vo.QueryParam;
@@ -19,18 +21,33 @@ import com.baidu.unbiz.multitask.common.TaskPair;
 import com.baidu.unbiz.multitask.task.ParallelExePool;
 import com.baidu.unbiz.multitask.task.thread.MultiResult;
 
+/**
+ * Created by wangchongjie on 16/4/18.
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "/applicationContext-test.xml")
-public class DistributededParallelFetchTest {
+@ContextConfiguration(locations = "/applicationContext-test2.xml")
+public class TestMultiProcess_Client {
 
     @Resource(name = "distributedParallelExePool")
     private ParallelExePool parallelExePool;
+
+    @Before
+    public void init() {
+        EndpointSupervisor supervisor = new EndpointSupervisor();
+        supervisor.setClientHost("127.0.0.1:8801;127.0.0.1:8802");
+        supervisor.init();
+    }
+
+    @After
+    public void clean() {
+        EndpointSupervisor.stop();
+    }
 
     /**
      * 测试分布式并行执行task
      */
     @Test
-    public void testDistributedParallelRunDisTask() {
+    public void runClient() {
         QueryParam qp = new QueryParam();
         MultiResult ctx =
                 parallelExePool.submit(
@@ -53,31 +70,8 @@ public class DistributededParallelFetchTest {
         System.out.println(uv);
         System.out.println(vstat);
         System.out.println(bstat);
-    }
 
-    /**
-     * 测试分布式并行执行task
-     */
-    @Test
-    public void testConcurrentDistributedParallelRunDisTask() {
-        final int loopCnt = 100;
-        final CountDownLatch latch = new CountDownLatch(loopCnt);
-
-        for (int i = 0; i < loopCnt; i++) {
-            new Thread() {
-                @Override
-                public void run() {
-                    testDistributedParallelRunDisTask();
-                    latch.countDown();
-                }
-            }.start();
-        }
-
-        try {
-            latch.await();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        dumySleep(2000 * 1000);
     }
 
     private void dumySleep(long time) {
@@ -87,4 +81,5 @@ public class DistributededParallelFetchTest {
             // do nothing
         }
     }
+
 }

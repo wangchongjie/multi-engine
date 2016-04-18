@@ -7,6 +7,7 @@ package com.baidu.unbiz.multiengine.transport.client;
 import org.slf4j.Logger;
 
 import com.baidu.unbiz.multiengine.transport.dto.Signal;
+import com.baidu.unbiz.multiengine.transport.dto.SignalType;
 import com.baidu.unbiz.multiengine.transport.server.TaskServerHandler;
 import com.baidu.unbiz.multitask.log.AopLogFactory;
 
@@ -41,11 +42,11 @@ public class TaskClientHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
         if (msg instanceof Signal) {
-            this.handleSignal((Signal) msg);
+            this.handleSignal(ctx, (Signal) msg);
         }
     }
 
-    private void handleSignal(Signal signal) {
+    private void handleSignal(ChannelHandlerContext ctx, Signal signal) {
         TaskClientContext.fillSessionResult(sessionKey, signal);
     }
 

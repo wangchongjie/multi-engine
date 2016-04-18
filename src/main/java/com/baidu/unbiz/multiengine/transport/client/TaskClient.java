@@ -1,13 +1,16 @@
 package com.baidu.unbiz.multiengine.transport.client;
 
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.slf4j.Logger;
 
-import com.baidu.unbiz.multiengine.exception.MultiEngineException;
+import com.baidu.unbiz.multiengine.endpoint.HeartBeatInfo;
 import com.baidu.unbiz.multiengine.task.TaskCommand;
 import com.baidu.unbiz.multiengine.transport.dto.Signal;
+import com.baidu.unbiz.multiengine.transport.dto.SignalType;
 import com.baidu.unbiz.multitask.log.AopLogFactory;
 
 import io.netty.channel.Channel;
@@ -19,12 +22,25 @@ public final class TaskClient extends AbstractTaskClient {
     private CountDownLatch initDone = new CountDownLatch(1);
     private AtomicBoolean success = new AtomicBoolean(true);
 
-    public void stop() {
-        Channel channel = TaskClientContext.sessionChannelMap.get(sessionKey);
-        if (channel == null) {
-            return;
+    public <T> T call(TaskCommand command) {
+        return syncSend(command);
+    }
+
+    public SendFuture asyncCall(TaskCommand request) {
+        return asyncSend(request);
+    }
+
+    public boolean heartBeat(HeartBeatInfo hbi) {
+        Signal<HeartBeatInfo> signal = new Signal<HeartBeatInfo>();
+        signal.setType(SignalType.HEART_BEAT);
+        try {
+            syncSend(signal, hbi.getTimeout(), TimeUnit.MILLISECONDS);
+        } catch (TimeoutException e) {
+            return false;
+        } catch (InterruptedException e) {
+            return false;
         }
-        channel.close();
+        return true;
     }
 
     public boolean start() {
@@ -49,6 +65,14 @@ public final class TaskClient extends AbstractTaskClient {
         return success.get();
     }
 
+    public void stop() {
+        Channel channel = TaskClientContext.sessionChannelMap.get(sessionKey);
+        if (channel == null) {
+            return;
+        }
+        channel.close();
+    }
+
     public void callbackOnException(Exception e) {
         LOG.error("client start fail:", e);
         success.set(false);
@@ -57,35 +81,5 @@ public final class TaskClient extends AbstractTaskClient {
 
     public void callbackPostInit() {
         initDone.countDown();
-    }
-
-    public <T> T call(TaskCommand command) {
-        SendFuture future = asynCall(command);
-        if (future instanceof IdentitySendFuture) {
-            return waitResult(((IdentitySendFuture) future).getId());
-        }
-        throw new MultiEngineException("support IdentitySendFuture only");
-    }
-
-    public SendFuture asynCall(TaskCommand command) {
-        long seqId = idGen.genId();
-
-        Signal<TaskCommand> signal = new Signal<TaskCommand>(command);
-        signal.setSeqId(seqId);
-
-        Channel channel = TaskClientContext.sessionChannelMap.get(sessionKey);
-        channel.writeAndFlush(signal);
-
-        SendFuture sendFutrue = new IdentitySendFuture(seqId);
-
-        TaskClientContext.placeSessionResult(sessionKey, seqId, sendFutrue);
-        return sendFutrue;
-    }
-
-    private <T> T waitResult(long seqId) {
-        SendFuture sendFutrue = TaskClientContext.getSessionResult(sessionKey, seqId);
-        T result = (T) sendFutrue.get();
-        TaskClientContext.removeSessionResult(sessionKey, seqId);
-        return result;
     }
 }
