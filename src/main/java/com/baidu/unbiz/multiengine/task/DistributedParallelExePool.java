@@ -28,6 +28,7 @@ public class DistributedParallelExePool extends SimpleParallelExePool {
 
     private final String DIS_TASK_PAIRS = "disTaskPairs";
     private final String FUTURES = "futures";
+    private final long DIS_TASK_DEFAULT_TIMEOUT = 50 * 1000;
 
     private void dispatchTaskPairs(List<TaskPair> localTaskPairs, List<TaskPair> disTaskPairs, TaskPair... taskPairs) {
         for (TaskPair taskPair : taskPairs) {
@@ -46,8 +47,8 @@ public class DistributedParallelExePool extends SimpleParallelExePool {
         dispatchTaskPairs(localTaskPairs, disTaskPairs, taskPairs);
 
         TaskPair[] taskPairsArray = null;
-        if(CollectionUtils.isNotEmpty(localTaskPairs)) {
-            taskPairsArray = localTaskPairs.toArray(new TaskPair[]{});
+        if (CollectionUtils.isNotEmpty(localTaskPairs)) {
+            taskPairsArray = localTaskPairs.toArray(new TaskPair[] {});
         }
         return context.putAttribute(TASK_PAIRS, taskPairsArray).putAttribute(DIS_TASK_PAIRS, disTaskPairs);
     }
@@ -73,14 +74,14 @@ public class DistributedParallelExePool extends SimpleParallelExePool {
         Map<String, SendFuture> futures = context.getAttribute(FUTURES);
         for (Map.Entry<String, SendFuture> future : futures.entrySet()) {
             Object result;
-            if (TaskConfig.NOT_LIMIT == policy.taskTimeout()) {
-                result = future.getValue().get();
-            } else {
-                try {
-                    result = future.getValue().get(policy.taskTimeout(), TimeUnit.MILLISECONDS);
-                } catch (Exception e) {
-                    throw new TaskTimeoutException(e);
-                }
+            long timeout = policy.taskTimeout();
+             if (TaskConfig.NOT_LIMIT == timeout) {
+                 timeout = DIS_TASK_DEFAULT_TIMEOUT;
+             }
+            try {
+                result = future.getValue().get(timeout, TimeUnit.MILLISECONDS);
+            } catch (Exception e) {
+                throw new TaskTimeoutException(e);
             }
             context.putResult(future.getKey(), result);
         }

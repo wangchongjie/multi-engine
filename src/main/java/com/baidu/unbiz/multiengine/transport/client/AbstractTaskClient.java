@@ -12,6 +12,7 @@ import com.baidu.unbiz.multiengine.endpoint.HostConf;
 import com.baidu.unbiz.multiengine.exception.MultiEngineException;
 import com.baidu.unbiz.multiengine.transport.SequenceIdGen;
 import com.baidu.unbiz.multiengine.transport.dto.Signal;
+import com.baidu.unbiz.multitask.constants.TaskConfig;
 import com.baidu.unbiz.multitask.log.AopLogFactory;
 
 import io.netty.bootstrap.Bootstrap;
@@ -96,11 +97,13 @@ public class AbstractTaskClient {
     }
 
     protected <T> T syncSend(Object request) {
-        SendFuture future = asyncSend(request);
-        if (future instanceof IdentitySendFuture) {
-            return waitResponse(((IdentitySendFuture) future).getId());
+        try {
+            return syncSend(request, TaskConfig.TASK_TIMEOUT_MILL_SECONDS, TimeUnit.MILLISECONDS);
+        } catch (TimeoutException e) {
+            throw new MultiEngineException(e);
+        } catch (InterruptedException e) {
+            throw new MultiEngineException(e);
         }
-        throw new MultiEngineException("support IdentitySendFuture only");
     }
 
     protected <T> T syncSend(Object request, long timeout, TimeUnit unit)

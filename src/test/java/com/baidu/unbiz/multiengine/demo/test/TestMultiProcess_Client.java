@@ -12,6 +12,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.util.Assert;
 
+import com.baidu.unbiz.multiengine.utils.TestUtils;
 import com.baidu.unbiz.multiengine.common.DisTaskPair;
 import com.baidu.unbiz.multiengine.endpoint.EndpointSupervisor;
 import com.baidu.unbiz.multiengine.vo.DeviceRequest;
@@ -34,7 +35,7 @@ public class TestMultiProcess_Client {
     @Before
     public void init() {
         EndpointSupervisor supervisor = new EndpointSupervisor();
-        supervisor.setClientHost("127.0.0.1:8801;127.0.0.1:8802");
+        supervisor.setServerHost("127.0.0.1:8801;127.0.0.1:8802;127.0.0.1:8803;127.0.0.1:8804");
         supervisor.init();
     }
 
@@ -48,6 +49,18 @@ public class TestMultiProcess_Client {
      */
     @Test
     public void runClient() {
+        for (int i = 0; i < 1000; i++) {
+            try {
+                doRunTask();
+            } catch (Exception e) {
+                // doNothing
+            }
+            TestUtils.dumySleep(1000);
+        }
+        TestUtils.dumySleep(TestUtils.VERY_LONG_TIME);
+    }
+
+    private void doRunTask() {
         QueryParam qp = new QueryParam();
         MultiResult ctx =
                 parallelExePool.submit(
@@ -70,16 +83,6 @@ public class TestMultiProcess_Client {
         System.out.println(uv);
         System.out.println(vstat);
         System.out.println(bstat);
-
-        dumySleep(2000 * 1000);
-    }
-
-    private void dumySleep(long time) {
-        try {
-            Thread.sleep(time);
-        } catch (InterruptedException e) {
-            // do nothing
-        }
     }
 
 }

@@ -1,10 +1,12 @@
 package com.baidu.unbiz.multiengine.endpoint;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
 
@@ -23,17 +25,19 @@ public class EndpointSupervisor {
             (new CustomizableThreadFactory("EndpointSupervisorScheduler"));
     private static long heartbeatInterval = 3 * 1000;
 
-    private static TaskServer taskServer;
+    private static List<TaskServer> taskServers = new ArrayList<TaskServer>();
+
+    private static String exportPort;
     private static String serverHost;
-    private static String clientHost;
 
     public static void init() {
-        List<HostConf> serverHost = HostConf.resolveHost(EndpointSupervisor.serverHost);
-        for (HostConf hostConf : serverHost) {
-            taskServer = TaskServerFactory.createTaskServer(hostConf);
+        List<HostConf> exportHosts = HostConf.resolvePort(exportPort);
+        for (HostConf hostConf : exportHosts) {
+            TaskServer taskServer = TaskServerFactory.createTaskServer(hostConf);
             taskServer.start();
+            taskServers.add(taskServer);
         }
-        List<HostConf> clientHost = HostConf.resolveHost(EndpointSupervisor.clientHost);
+        List<HostConf> clientHost = HostConf.resolveHost(EndpointSupervisor.serverHost);
         EndpointPool.init(clientHost);
 
         scheduleHeartBeat();
@@ -41,10 +45,12 @@ public class EndpointSupervisor {
 
     public static void stop() {
         EndpointPool.stop();
-        if (taskServer == null) {
+        if (CollectionUtils.isEmpty(taskServers)) {
             return;
         }
-        taskServer.stop();
+        for (TaskServer taskServer : taskServers) {
+            taskServer.stop();
+        }
         scheduler.shutdown();
     }
 
@@ -52,8 +58,8 @@ public class EndpointSupervisor {
         scheduler.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
-                try{
-                    heartBeat();
+                try {
+                    doHeartBeat();
                 } catch (Exception e) {
                     LOG.error("scheduleHeartBeat", e);
                 }
@@ -62,11 +68,26 @@ public class EndpointSupervisor {
         }, 0, heartbeatInterval, TimeUnit.MILLISECONDS);
     }
 
-    private static void heartBeat() {
+    private static void doHeartBeat() {
         List<TaskClient> pool = EndpointPool.getPool();
         for (TaskClient taskClient : pool) {
-            boolean isAlive = taskClient.heartBeat(new HeartBeatInfo(3000));
-            LOG.debug(String.format("%s isAlive:%s", taskClient.getHostConf(), isAlive));
+            if(taskClient.isInvalid()) {
+                tryRestartEndpoint(taskClient);
+            }
+            boolean isAlive = taskClient.heartBeat(HeartBeatInfo.Holder.instance);
+            boolean invalid = taskClient.getInvalid().getAndSet(!isAlive);
+            if (isAlive == invalid) {
+                LOG.info(String.format("%s change alive to:%s", taskClient.getHostConf(), isAlive));
+            }
+            LOG.debug(String.format("%s is alive:%s", taskClient.getHostConf(), isAlive));
+        }
+    }
+
+    private static void tryRestartEndpoint(TaskClient taskClient) {
+        try {
+            taskClient.restart();
+        } catch (Exception e){
+            // do nothing
         }
     }
 
@@ -78,11 +99,11 @@ public class EndpointSupervisor {
         this.serverHost = serverHost;
     }
 
-    public String getClientHost() {
-        return clientHost;
+    public String getExportPort() {
+        return exportPort;
     }
 
-    public void setClientHost(String clientHost) {
-        this.clientHost = clientHost;
+    public void setExportPort(String exportPort) {
+        this.exportPort = exportPort;
     }
 }

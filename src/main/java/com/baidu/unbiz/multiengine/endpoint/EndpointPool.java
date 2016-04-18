@@ -10,6 +10,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.springframework.util.Assert;
 
+import com.baidu.unbiz.multiengine.exception.MultiEngineException;
 import com.baidu.unbiz.multiengine.transport.client.TaskClient;
 import com.baidu.unbiz.multiengine.transport.client.TaskClientFactory;
 import com.baidu.unbiz.multitask.log.AopLogFactory;
@@ -39,9 +40,10 @@ public class EndpointPool {
         }
         for (HostConf hostConf : serverList) {
             TaskClient endpoint = clientFactory.createTaskClient(hostConf);
-            if (endpoint.start()) {
-                pool.add(endpoint);
-            }
+
+            boolean success = endpoint.start();
+            endpoint.setInvalid(!success);
+            pool.add(endpoint);
         }
     }
 
@@ -55,14 +57,27 @@ public class EndpointPool {
     }
 
     public static TaskClient selectEndpoint() {
+        return selectEndpoint(pool.size() * 2);
+    }
+
+    private static TaskClient selectEndpoint(int retry) {
         try {
             hasInit.await();
         } catch (InterruptedException e) {
-            // do nothing
+            LOG.error("select endpoint:", e);
+        }
+
+        if (retry <= 0) {
+            throw new MultiEngineException("select endpoint retry fail");
         }
         Assert.isTrue(pool.size() > 0);
+
         int idx = index.addAndGet(1);
-        return pool.get((Math.abs(idx) % pool.size()));
+        TaskClient endpoint = pool.get((Math.abs(idx) % pool.size()));
+        if (endpoint.getInvalid().get()) {
+            return selectEndpoint(retry - 1);
+        }
+        return endpoint;
     }
 
     public static List<TaskClient> getPool() {

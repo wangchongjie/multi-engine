@@ -20,7 +20,8 @@ public final class TaskClient extends AbstractTaskClient {
     private static final Logger LOG = AopLogFactory.getLogger(TaskClient.class);
 
     private CountDownLatch initDone = new CountDownLatch(1);
-    private AtomicBoolean success = new AtomicBoolean(true);
+    private AtomicBoolean initSuccess = new AtomicBoolean(true);
+    private AtomicBoolean invalid = new AtomicBoolean(false);
 
     public <T> T call(TaskCommand command) {
         return syncSend(command);
@@ -43,6 +44,13 @@ public final class TaskClient extends AbstractTaskClient {
         return true;
     }
 
+    public boolean restart() {
+        this.stop();
+        initDone = new CountDownLatch(1);
+        initSuccess.set(false);
+        return start();
+    }
+
     public boolean start() {
         final AbstractTaskClient client = this;
         new Thread() {
@@ -60,9 +68,9 @@ public final class TaskClient extends AbstractTaskClient {
             initDone.await();
         } catch (InterruptedException e) {
             LOG.error("client await fail:" + client.getHostConf());
-            success.set(false);
+            initSuccess.set(false);
         }
-        return success.get();
+        return initSuccess.get();
     }
 
     public void stop() {
@@ -75,11 +83,27 @@ public final class TaskClient extends AbstractTaskClient {
 
     public void callbackOnException(Exception e) {
         LOG.error("client start fail:", e);
-        success.set(false);
+        initSuccess.set(false);
         initDone.countDown();
     }
 
     public void callbackPostInit() {
         initDone.countDown();
+    }
+
+    public AtomicBoolean getInvalid() {
+        return invalid;
+    }
+
+    public boolean isInvalid() {
+        return invalid.get();
+    }
+
+    public void setInvalid(AtomicBoolean invalid) {
+        this.invalid = invalid;
+    }
+
+    public void setInvalid(boolean invalid) {
+        this.invalid.set(invalid);
     }
 }

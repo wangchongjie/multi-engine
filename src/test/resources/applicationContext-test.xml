@@ -16,7 +16,7 @@
     <bean name="endpointSupervisor" class="com.baidu.unbiz.multiengine.endpoint.EndpointSupervisor"
           init-method="init" destroy-method="stop">
         <property name="serverHost" value="127.0.0.1:8801;127.0.0.1:8802"/>
-        <property name="clientHost" value="127.0.0.1:8801;127.0.0.1:8802"/>
+        <property name="exportPort" value="8801;8802"/>
     </bean>
 
     <!-- 显式配置线程执行环境，可选择性覆盖 -->

@@ -38,6 +38,20 @@ public class HostConf {
         return hostConfs;
     }
 
+    public static List<HostConf> resolvePort(String ports) {
+        List<HostConf> hostConfs = new ArrayList<HostConf>();
+        if (StringUtils.isEmpty(ports)) {
+            return hostConfs;
+        }
+        String[] ps = ports.split(";");
+        for (String port : ps) {
+            HostConf hostConf = new HostConf();
+            hostConf.setPort(Integer.parseInt(port));
+            hostConfs.add(hostConf);
+        }
+        return hostConfs;
+    }
+
     public int getPort() {
         return port;
     }
