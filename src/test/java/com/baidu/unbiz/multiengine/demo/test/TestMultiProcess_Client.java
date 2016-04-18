@@ -32,16 +32,17 @@ public class TestMultiProcess_Client {
     @Resource(name = "distributedParallelExePool")
     private ParallelExePool parallelExePool;
 
+    private EndpointSupervisor supervisor = new EndpointSupervisor();
+
     @Before
     public void init() {
-        EndpointSupervisor supervisor = new EndpointSupervisor();
         supervisor.setServerHost("127.0.0.1:8801;127.0.0.1:8802;127.0.0.1:8803;127.0.0.1:8804");
         supervisor.init();
     }
 
     @After
     public void clean() {
-        EndpointSupervisor.stop();
+        supervisor.stop();
     }
 
     /**

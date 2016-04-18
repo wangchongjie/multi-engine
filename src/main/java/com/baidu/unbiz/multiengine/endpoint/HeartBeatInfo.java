@@ -4,7 +4,7 @@ package com.baidu.unbiz.multiengine.endpoint;
  * Created by wangchongjie on 16/4/18.
  */
 public class HeartBeatInfo {
-    public final long DEFAULT_TIMEOUT = 3000L;
+    public final long DEFAULT_TIMEOUT = 5 * 1000L;
 
     private long timeout = DEFAULT_TIMEOUT;
 

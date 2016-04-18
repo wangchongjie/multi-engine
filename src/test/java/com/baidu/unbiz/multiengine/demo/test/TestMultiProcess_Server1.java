@@ -17,16 +17,17 @@ import com.baidu.unbiz.multiengine.endpoint.EndpointSupervisor;
 @ContextConfiguration(locations = "/applicationContext-test2.xml")
 public class TestMultiProcess_Server1 {
 
+    private EndpointSupervisor supervisor = new EndpointSupervisor();
+
     @Before
     public void init() {
-        EndpointSupervisor supervisor = new EndpointSupervisor();
         supervisor.setExportPort("8801;8802");
-        EndpointSupervisor.init();
+        supervisor.init();
     }
 
     @After
     public void clean() {
-        EndpointSupervisor.stop();
+        supervisor.stop();
     }
 
     /**
