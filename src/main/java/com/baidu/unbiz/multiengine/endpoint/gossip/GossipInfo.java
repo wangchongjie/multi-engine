@@ -2,6 +2,9 @@ package com.baidu.unbiz.multiengine.endpoint.gossip;
 
 import java.util.List;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
+
 import com.baidu.unbiz.multiengine.endpoint.HostConf;
 
 /**
@@ -31,4 +34,9 @@ public class GossipInfo {
     public void setVersion(long version) {
         this.version = version;
     }
+
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+    }
+
 }

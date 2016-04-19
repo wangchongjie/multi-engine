@@ -3,6 +3,7 @@ package com.baidu.unbiz.multiengine.transport.server;
 import org.slf4j.Logger;
 
 import com.baidu.unbiz.multiengine.endpoint.EndpointSupervisor;
+import com.baidu.unbiz.multiengine.endpoint.HostConf;
 import com.baidu.unbiz.multiengine.endpoint.gossip.GossipInfo;
 import com.baidu.unbiz.multiengine.task.TaskCommand;
 import com.baidu.unbiz.multiengine.transport.dto.Signal;
@@ -82,7 +83,8 @@ public class TaskServerHandler extends ContextAwareInboundHandler {
     }
 
     private void handleGossipReack(ChannelHandlerContext ctx, Signal<GossipInfo> signal) {
-        // fixme
+        GossipInfo remoteInfo = signal.getMessage();
+        EndpointSupervisor.mergeTaskServer(remoteInfo.getHostConfs());
         LOG.debug("gossip re-ack：" + signal);
     }
 
