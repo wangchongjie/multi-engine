@@ -1,4 +1,4 @@
-package com.baidu.unbiz.multiengine.endpoint;
+package com.baidu.unbiz.multiengine.endpoint.heartbeat;
 
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -8,6 +8,7 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
 
+import com.baidu.unbiz.multiengine.endpoint.EndpointPool;
 import com.baidu.unbiz.multiengine.transport.client.TaskClient;
 import com.baidu.unbiz.multitask.log.AopLogFactory;
 
@@ -20,9 +21,13 @@ public abstract class HeartbeatSupport {
 
     protected static ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor
             (new CustomizableThreadFactory("EndpointSupervisorScheduler"));
-    protected static long heartbeatInterval = 3 * 1000;
+    protected static long heartbeatInterval = 10 * 1000;
 
-    protected void scheduleHeartBeat() {
+    public void shutdownScheduler() {
+        scheduler.shutdown();
+    }
+
+    public void scheduleHeartBeat() {
         scheduler.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {

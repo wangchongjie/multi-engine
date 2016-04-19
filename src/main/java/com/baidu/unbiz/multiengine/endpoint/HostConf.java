@@ -1,5 +1,7 @@
 package com.baidu.unbiz.multiengine.endpoint;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,12 +18,33 @@ public class HostConf {
     private int port = Integer.parseInt(System.getProperty("port", "8007"));
     private boolean ssl = System.getProperty("ssl") != null;
 
-    public HostConf(){
+    public HostConf() {
+        try {
+            InetAddress addr = InetAddress.getLocalHost();
+            host = addr.getHostAddress();
+        } catch (UnknownHostException e) {
+            // do nothing
+        }
     }
 
-    public HostConf(String host, int port){
+    public HostConf(String host, int port) {
+        this();
         this.host = host;
         this.port = port;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof HostConf)) {
+            return false;
+        }
+        HostConf other = (HostConf) obj;
+        return this.host.equals(other.getHost()) && this.port == other.getPort() && this.ssl == other.isSsl();
+    }
+
+    @Override
+    public int hashCode() {
+        return this.host.hashCode() + this.host.hashCode();
     }
 
     public static List<HostConf> resolveHost(String hosts) {
@@ -39,6 +62,7 @@ public class HostConf {
     }
 
     public static List<HostConf> resolvePort(String ports) {
+
         List<HostConf> hostConfs = new ArrayList<HostConf>();
         if (StringUtils.isEmpty(ports)) {
             return hostConfs;

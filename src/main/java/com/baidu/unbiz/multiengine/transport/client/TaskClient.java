@@ -7,7 +7,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.slf4j.Logger;
 
-import com.baidu.unbiz.multiengine.endpoint.HeartbeatInfo;
+import com.baidu.unbiz.multiengine.endpoint.gossip.GossipSync;
+import com.baidu.unbiz.multiengine.endpoint.heartbeat.HeartbeatInfo;
 import com.baidu.unbiz.multiengine.task.TaskCommand;
 import com.baidu.unbiz.multiengine.transport.dto.Signal;
 import com.baidu.unbiz.multiengine.transport.dto.SignalType;
@@ -42,6 +43,16 @@ public final class TaskClient extends AbstractTaskClient {
             return false;
         }
         return true;
+    }
+
+    public void syncGossip() {
+        Signal<GossipSync> signal = new Signal<GossipSync>();
+        signal.setType(SignalType.GOSSIP_SYNC);
+        try {
+            onewaySend(signal);
+        } catch (Exception e) {
+            LOG.warn("sync gossip:", e);
+        }
     }
 
     public boolean restart() {

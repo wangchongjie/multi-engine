@@ -1,5 +1,6 @@
 package com.baidu.unbiz.multiengine.endpoint;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
@@ -13,6 +14,7 @@ import org.springframework.util.Assert;
 import com.baidu.unbiz.multiengine.exception.MultiEngineException;
 import com.baidu.unbiz.multiengine.transport.client.TaskClient;
 import com.baidu.unbiz.multiengine.transport.client.TaskClientFactory;
+import com.baidu.unbiz.multiengine.transport.server.TaskServer;
 import com.baidu.unbiz.multitask.log.AopLogFactory;
 
 /**
@@ -34,10 +36,7 @@ public class EndpointPool {
         }
     }
 
-    public static void doInit(List<HostConf> serverList) {
-        if (CollectionUtils.isEmpty(serverList)) {
-            LOG.error("serverList is empty");
-        }
+    public static void add(List<HostConf> serverList) {
         for (HostConf hostConf : serverList) {
             TaskClient endpoint = clientFactory.createTaskClient(hostConf);
 
@@ -45,6 +44,21 @@ public class EndpointPool {
             endpoint.setInvalid(!success);
             pool.add(endpoint);
         }
+    }
+
+    public static List<HostConf> getTaskHostConf(){
+        List<HostConf> hostConfs = new ArrayList<HostConf>();
+        for(TaskClient taskServer : pool){
+            hostConfs.add(taskServer.getHostConf());
+        }
+        return hostConfs;
+    }
+
+    private static void doInit(List<HostConf> serverList) {
+        if (CollectionUtils.isEmpty(serverList)) {
+            LOG.error("serverList is empty");
+        }
+        add(serverList);
     }
 
     public static void stop() {
@@ -57,7 +71,7 @@ public class EndpointPool {
     }
 
     public static TaskClient selectEndpoint() {
-        return selectEndpoint(pool.size() * 2);
+        return selectEndpoint(pool.size() * 5);
     }
 
     private static TaskClient selectEndpoint(int retry) {

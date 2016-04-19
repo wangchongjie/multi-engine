@@ -96,6 +96,12 @@ public class AbstractTaskClient {
         }
     }
 
+    protected void onewaySend(Object request) {
+        Signal signal = checkAndWrapSignal(request);
+        Channel channel = TaskClientContext.sessionChannelMap.get(sessionKey);
+        channel.writeAndFlush(signal);
+    }
+
     protected <T> T syncSend(Object request) {
         try {
             return syncSend(request, TaskConfig.TASK_TIMEOUT_MILL_SECONDS, TimeUnit.MILLISECONDS);

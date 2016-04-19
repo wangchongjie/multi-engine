@@ -4,8 +4,14 @@ package com.baidu.unbiz.multiengine.transport.client;
  * Created by wangchongjie on 16/3/31.
  */
 
+import java.util.List;
+
 import org.slf4j.Logger;
 
+import com.baidu.unbiz.multiengine.endpoint.EndpointPool;
+import com.baidu.unbiz.multiengine.endpoint.EndpointSupervisor;
+import com.baidu.unbiz.multiengine.endpoint.HostConf;
+import com.baidu.unbiz.multiengine.endpoint.gossip.GossipInfo;
 import com.baidu.unbiz.multiengine.transport.dto.Signal;
 import com.baidu.unbiz.multiengine.transport.dto.SignalType;
 import com.baidu.unbiz.multiengine.transport.server.TaskServerHandler;
@@ -47,7 +53,27 @@ public class TaskClientHandler extends ChannelInboundHandlerAdapter {
     }
 
     private void handleSignal(ChannelHandlerContext ctx, Signal signal) {
+        if (SignalType.GOSSIC_ACK.equals(signal.getType())) {
+            handleGossipAck(ctx, signal);
+            return;
+        }
         TaskClientContext.fillSessionResult(sessionKey, signal);
+    }
+
+    private void handleGossipAck(ChannelHandlerContext ctx, Signal<GossipInfo> signal) {
+        GossipInfo diffInfo = new GossipInfo();
+        List<HostConf> locals = EndpointSupervisor.getTaskHostConf();
+        GossipInfo remoteInfo = signal.getMessage();
+
+        locals.removeAll(remoteInfo.getHostConfs());
+        diffInfo.setHostConfs(locals);
+
+        Signal<GossipInfo> reack = new Signal(diffInfo);
+        reack.setType(SignalType.GOSSIP_REACK);
+        ctx.writeAndFlush(reack);
+
+        EndpointSupervisor.mergeTaskServer(remoteInfo.getHostConfs());
+        LOG.debug("gossip re-ack：" + signal);
     }
 
     @Override

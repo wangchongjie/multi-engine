@@ -36,7 +36,8 @@ public class TestMultiProcess_Client {
 
     @Before
     public void init() {
-        supervisor.setServerHost("127.0.0.1:8801;127.0.0.1:8802;127.0.0.1:8803;127.0.0.1:8804");
+        supervisor.setServerHost("127.0.0.1:8801");
+        supervisor.setExportPort("8805");
         supervisor.init();
     }
 

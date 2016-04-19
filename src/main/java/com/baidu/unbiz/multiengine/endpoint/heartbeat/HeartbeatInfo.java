@@ -1,4 +1,4 @@
-package com.baidu.unbiz.multiengine.endpoint;
+package com.baidu.unbiz.multiengine.endpoint.heartbeat;
 
 /**
  * Created by wangchongjie on 16/4/18.

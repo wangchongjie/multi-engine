@@ -2,6 +2,8 @@ package com.baidu.unbiz.multiengine.transport.server;
 
 import org.slf4j.Logger;
 
+import com.baidu.unbiz.multiengine.endpoint.EndpointSupervisor;
+import com.baidu.unbiz.multiengine.endpoint.gossip.GossipInfo;
 import com.baidu.unbiz.multiengine.task.TaskCommand;
 import com.baidu.unbiz.multiengine.transport.dto.Signal;
 import com.baidu.unbiz.multiengine.transport.dto.SignalType;
@@ -36,9 +38,16 @@ public class TaskServerHandler extends ContextAwareInboundHandler {
             handleHeartBeat(ctx, signal);
             return;
         }
-
         if (SignalType.TASK_COMMOND.equals(signal.getType())) {
             handleTaskCommand(ctx, signal);
+            return;
+        }
+        if (SignalType.GOSSIP_SYNC.equals(signal.getType())) {
+            handleGossipSync(ctx, signal);
+            return;
+        }
+        if (SignalType.GOSSIP_REACK.equals(signal.getType())) {
+            handleGossipReack(ctx, signal);
             return;
         }
     }
@@ -61,6 +70,20 @@ public class TaskServerHandler extends ContextAwareInboundHandler {
         // echo heat beat
         ctx.writeAndFlush(signal);
         LOG.debug("heart beat echo：" + signal);
+    }
+
+    private void handleGossipSync(ChannelHandlerContext ctx, Signal signal) {
+        GossipInfo info = new GossipInfo();
+        info.setHostConfs(EndpointSupervisor.getTaskHostConf());
+        Signal<GossipInfo> ack = new Signal(info);
+        ack.setType(SignalType.GOSSIC_ACK);
+        ctx.writeAndFlush(ack);
+        LOG.debug("gossip ack：" + signal);
+    }
+
+    private void handleGossipReack(ChannelHandlerContext ctx, Signal<GossipInfo> signal) {
+        // fixme
+        LOG.debug("gossip re-ack：" + signal);
     }
 
     @Override
