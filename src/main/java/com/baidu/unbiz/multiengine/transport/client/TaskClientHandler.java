@@ -8,7 +8,6 @@ import java.util.List;
 
 import org.slf4j.Logger;
 
-import com.baidu.unbiz.multiengine.endpoint.EndpointPool;
 import com.baidu.unbiz.multiengine.endpoint.EndpointSupervisor;
 import com.baidu.unbiz.multiengine.endpoint.HostConf;
 import com.baidu.unbiz.multiengine.endpoint.gossip.GossipInfo;
@@ -57,6 +56,14 @@ public class TaskClientHandler extends ChannelInboundHandlerAdapter {
             handleGossipAck(ctx, signal);
             return;
         }
+        if (SignalType.SERVER_STOP.equals(signal.getType())) {
+            handleServerStop(ctx, signal);
+            return;
+        }
+        handleDefault(ctx, signal);
+    }
+
+    private void handleDefault(ChannelHandlerContext ctx, Signal<GossipInfo> signal) {
         TaskClientContext.fillSessionResult(sessionKey, signal);
     }
 
@@ -74,6 +81,21 @@ public class TaskClientHandler extends ChannelInboundHandlerAdapter {
 
         EndpointSupervisor.mergeTaskServer(remoteInfo.getHostConfs());
         LOG.debug("gossip re-ack：" + signal);
+    }
+
+    private void handleServerStop(ChannelHandlerContext ctx, Signal signal) {
+        String sessionKey = ctx.channel().attr(TaskClientContext.SESSION_ATTRIBUTE).get();
+        TaskClient taskClient = TaskClientContext.sessionClientMap.get(sessionKey);
+        if (taskClient != null) {
+            taskClient.setInvalid(true);
+            LOG.info("server close：" + signal);
+        }
+    }
+
+    @Override
+    public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
+        ctx.channel().attr(TaskClientContext.SESSION_ATTRIBUTE).setIfAbsent(sessionKey);
+        super.channelRegistered(ctx);
     }
 
     @Override

@@ -27,21 +27,21 @@ public abstract class HeartbeatSupport {
         scheduler.shutdown();
     }
 
-    public void scheduleHeartBeat() {
+    public void scheduleHeartbeat() {
         scheduler.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
                 try {
-                    doHeartBeat();
+                    doHeartbeat();
                 } catch (Exception e) {
-                    LOG.error("scheduleHeartBeat", e);
+                    LOG.error("scheduleHeartbeat", e);
                 }
 
             }
-        }, 0, heartbeatInterval, TimeUnit.MILLISECONDS);
+        }, 1000, heartbeatInterval, TimeUnit.MILLISECONDS);
     }
 
-    private void doHeartBeat() {
+    private void doHeartbeat() {
         List<TaskClient> pool = EndpointPool.getPool();
         for (TaskClient taskClient : pool) {
             if(taskClient.isInvalid()) {

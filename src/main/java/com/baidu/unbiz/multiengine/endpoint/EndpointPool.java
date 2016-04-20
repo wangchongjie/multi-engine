@@ -71,25 +71,28 @@ public class EndpointPool {
     }
 
     public static TaskClient selectEndpoint() {
-        return selectEndpoint(pool.size() * 5);
+        return selectEndpoint(pool.size(), true);
     }
 
-    private static TaskClient selectEndpoint(int retry) {
+    private static TaskClient selectEndpoint(int retry, boolean first) {
         try {
             hasInit.await();
         } catch (InterruptedException e) {
             LOG.error("select endpoint:", e);
         }
 
-        if (retry <= 0) {
+        if (retry < 0) {
             throw new MultiEngineException("select endpoint retry fail");
         }
         Assert.isTrue(pool.size() > 0);
 
-        int idx = index.addAndGet(1);
+        int idx = retry;
+        if(first) {
+            idx = index.addAndGet(1);
+        }
         TaskClient endpoint = pool.get((Math.abs(idx) % pool.size()));
         if (endpoint.getInvalid().get()) {
-            return selectEndpoint(retry - 1);
+            return selectEndpoint(retry - 1, false);
         }
         return endpoint;
     }

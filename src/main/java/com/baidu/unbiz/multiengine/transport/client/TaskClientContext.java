@@ -4,13 +4,17 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.springframework.util.Assert;
 import com.baidu.unbiz.multiengine.transport.dto.Signal;
 import io.netty.channel.Channel;
+import io.netty.util.AttributeKey;
 
 /**
  * Created by wangchongjie on 16/4/11.
  */
 public class TaskClientContext {
 
-    static ConcurrentHashMap<String, Channel> sessionChannelMap = new ConcurrentHashMap<String, Channel>();
+    public static ConcurrentHashMap<String, Channel> sessionChannelMap = new ConcurrentHashMap<String, Channel>();
+    public static ConcurrentHashMap<String, TaskClient> sessionClientMap = new ConcurrentHashMap<String, TaskClient>();
+    public static final AttributeKey<String> SESSION_ATTRIBUTE = AttributeKey.newInstance("SESSION_ATTRIBUTE");
+
     private static ConcurrentHashMap<String, ConcurrentHashMap<Long, SendFuture>> sessionResultMap =
             new ConcurrentHashMap<String, ConcurrentHashMap<Long, SendFuture>>();
 

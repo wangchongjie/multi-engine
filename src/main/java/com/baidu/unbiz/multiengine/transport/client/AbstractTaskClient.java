@@ -121,8 +121,6 @@ public class AbstractTaskClient {
         throw new MultiEngineException("support IdentitySendFuture only");
     }
 
-
-
     protected SendFuture asyncSend(Object request) {
         Signal signal = checkAndWrapSignal(request);
 

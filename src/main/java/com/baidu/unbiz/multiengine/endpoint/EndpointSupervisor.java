@@ -40,9 +40,10 @@ public class EndpointSupervisor {
 
     public static List<HostConf> getTaskHostConf(){
         List<HostConf> hostConfs = new ArrayList<HostConf>();
-        for(TaskServer taskServer : taskServers){
-            hostConfs.add(taskServer.getHostConf());
-        }
+        // fixme
+//        for(TaskServer taskServer : taskServers){
+//            hostConfs.add(taskServer.getHostConf());
+//        }
         hostConfs.addAll(EndpointPool.getTaskHostConf());
         return hostConfs;
     }
@@ -64,7 +65,7 @@ public class EndpointSupervisor {
         List<HostConf> clientHost = HostConf.resolveHost(this.serverHost);
         EndpointPool.init(clientHost);
 
-        heartbeatSupport.scheduleHeartBeat();
+        heartbeatSupport.scheduleHeartbeat();
         gossipSupport.scheduleGossip();
     }
 

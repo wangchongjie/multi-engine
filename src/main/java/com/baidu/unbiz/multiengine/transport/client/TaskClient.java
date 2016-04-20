@@ -7,6 +7,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.slf4j.Logger;
 
+import com.baidu.unbiz.multiengine.endpoint.HostConf;
 import com.baidu.unbiz.multiengine.endpoint.gossip.GossipSync;
 import com.baidu.unbiz.multiengine.endpoint.heartbeat.HeartbeatInfo;
 import com.baidu.unbiz.multiengine.task.TaskCommand;
@@ -96,6 +97,12 @@ public final class TaskClient extends AbstractTaskClient {
         LOG.error("client start fail:", e);
         initSuccess.set(false);
         initDone.countDown();
+    }
+
+    public TaskClient() {}
+
+    public TaskClient(HostConf hostConf) {
+        this.hostConf = hostConf;
     }
 
     public void callbackPostInit() {

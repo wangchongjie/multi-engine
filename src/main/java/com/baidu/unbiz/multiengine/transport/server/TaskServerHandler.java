@@ -3,8 +3,8 @@ package com.baidu.unbiz.multiengine.transport.server;
 import org.slf4j.Logger;
 
 import com.baidu.unbiz.multiengine.endpoint.EndpointSupervisor;
-import com.baidu.unbiz.multiengine.endpoint.HostConf;
 import com.baidu.unbiz.multiengine.endpoint.gossip.GossipInfo;
+import com.baidu.unbiz.multiengine.endpoint.heartbeat.HeartbeatInfo;
 import com.baidu.unbiz.multiengine.task.TaskCommand;
 import com.baidu.unbiz.multiengine.transport.dto.Signal;
 import com.baidu.unbiz.multiengine.transport.dto.SignalType;
@@ -36,7 +36,7 @@ public class TaskServerHandler extends ContextAwareInboundHandler {
 
     private void handleSignal(ChannelHandlerContext ctx, Signal signal) {
         if (SignalType.HEART_BEAT.equals(signal.getType())) {
-            handleHeartBeat(ctx, signal);
+            handleHeartbeat(ctx, signal);
             return;
         }
         if (SignalType.TASK_COMMOND.equals(signal.getType())) {
@@ -67,7 +67,7 @@ public class TaskServerHandler extends ContextAwareInboundHandler {
         ctx.writeAndFlush(resultSignal);
     }
 
-    private void handleHeartBeat(ChannelHandlerContext ctx, Signal signal) {
+    private void handleHeartbeat(ChannelHandlerContext ctx, Signal signal) {
         // echo heat beat
         ctx.writeAndFlush(signal);
         LOG.debug("heart beat echo：" + signal);
@@ -86,7 +86,17 @@ public class TaskServerHandler extends ContextAwareInboundHandler {
         GossipInfo remoteInfo = signal.getMessage();
         EndpointSupervisor.mergeTaskServer(remoteInfo.getHostConfs());
         LOG.debug("gossip re-ack：" + signal);
+
+
     }
+
+//    @Override
+//    public void channelUnregistered(ChannelHandlerContext ctx)  throws Exception {
+//        Signal<HeartbeatInfo> signal = new Signal<HeartbeatInfo>();
+//        signal.setType(SignalType.SERVER_STOP);
+//        ctx.writeAndFlush(signal);
+//        super.channelUnregistered(ctx);
+//    }
 
     @Override
     public void channelReadComplete(ChannelHandlerContext ctx) {
