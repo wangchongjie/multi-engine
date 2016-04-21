@@ -1,8 +1,12 @@
 package com.baidu.unbiz.multiengine.transport.client;
 
 import java.util.concurrent.ConcurrentHashMap;
+
+import org.slf4j.Logger;
 import org.springframework.util.Assert;
 import com.baidu.unbiz.multiengine.transport.dto.Signal;
+import com.baidu.unbiz.multitask.log.AopLogFactory;
+
 import io.netty.channel.Channel;
 import io.netty.util.AttributeKey;
 
@@ -10,6 +14,7 @@ import io.netty.util.AttributeKey;
  * Created by wangchongjie on 16/4/11.
  */
 public class TaskClientContext {
+    private static final Logger LOG = AopLogFactory.getLogger(TaskClientContext.class);
 
     public static ConcurrentHashMap<String, Channel> sessionChannelMap = new ConcurrentHashMap<String, Channel>();
     public static ConcurrentHashMap<String, TaskClient> sessionClientMap = new ConcurrentHashMap<String, TaskClient>();
@@ -36,6 +41,9 @@ public class TaskClientContext {
         ConcurrentHashMap<Long, SendFuture> resultMap = sessionResultMap.get(sessionKey);
         Assert.notNull(resultMap);
         SendFuture futrue = resultMap.get(seqId);
+        if (futrue == null) {
+            LOG.error("future is null," + result.toString());
+        }
         futrue.set(result);
     }
 

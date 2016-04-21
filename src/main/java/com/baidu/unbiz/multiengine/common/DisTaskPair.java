@@ -11,4 +11,9 @@ public class DisTaskPair extends TaskPair {
         this.field1 = taskName;
         this.field2 = param;
     }
+
+    @Override
+    public TaskPair wrap(String taskName, Object param) {
+        return new DisTaskPair(taskName, param);
+    }
 }

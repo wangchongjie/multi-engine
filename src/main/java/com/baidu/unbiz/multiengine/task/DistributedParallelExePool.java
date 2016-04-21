@@ -46,7 +46,7 @@ public class DistributedParallelExePool extends SimpleParallelExePool {
         List<TaskPair> disTaskPairs = new ArrayList<TaskPair>();
         dispatchTaskPairs(localTaskPairs, disTaskPairs, taskPairs);
 
-        TaskPair[] taskPairsArray = null;
+        TaskPair[] taskPairsArray = new TaskPair[0];
         if (CollectionUtils.isNotEmpty(localTaskPairs)) {
             taskPairsArray = localTaskPairs.toArray(new TaskPair[] {});
         }
@@ -72,6 +72,9 @@ public class DistributedParallelExePool extends SimpleParallelExePool {
     @Override
     public TaskContext postSubmit(TaskContext context, ExecutePolicy policy, TaskPair... taskPairs) {
         Map<String, SendFuture> futures = context.getAttribute(FUTURES);
+        if (futures == null) {
+            return context;
+        }
         for (Map.Entry<String, SendFuture> future : futures.entrySet()) {
             Object result;
             long timeout = policy.taskTimeout();
