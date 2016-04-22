@@ -76,6 +76,12 @@ public class HostConf {
         return hostConfs;
     }
 
+    public String info() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(this.getHost()).append(":").append(this.getPort());
+        return sb.toString();
+    }
+
     public int getPort() {
         return port;
     }

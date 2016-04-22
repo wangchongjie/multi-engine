@@ -14,7 +14,6 @@ import org.springframework.util.Assert;
 import com.baidu.unbiz.multiengine.exception.MultiEngineException;
 import com.baidu.unbiz.multiengine.transport.client.TaskClient;
 import com.baidu.unbiz.multiengine.transport.client.TaskClientFactory;
-import com.baidu.unbiz.multiengine.transport.server.TaskServer;
 import com.baidu.unbiz.multitask.log.AopLogFactory;
 
 /**
@@ -36,19 +35,59 @@ public class EndpointPool {
         }
     }
 
-    public static void add(List<HostConf> serverList) {
-        for (HostConf hostConf : serverList) {
-            TaskClient endpoint = clientFactory.createTaskClient(hostConf);
+    public static boolean exist(HostConf hostConf) {
+        for (TaskClient taskClient : pool) {
+            if(taskClient.getHostConf().equals(hostConf)){
+                return true;
+            }
+        }
+        return false;
+    }
 
+    public static TaskClient find(HostConf hostConf) {
+        for (TaskClient taskClient : pool) {
+            if(taskClient.getHostConf().equals(hostConf)){
+                return taskClient;
+            }
+        }
+        return null;
+    }
+
+    public static void beInvalid(List<HostConf> serverList) {
+        for (HostConf hostConf : serverList) {
+            TaskClient taskClient = find(hostConf);
+            if(taskClient == null) {
+                continue;
+            }
+            taskClient.setInvalid(true);
+        }
+
+    }
+
+    private static void internalAdd(List<HostConf> serverList) {
+        for (HostConf hostConf : serverList) {
+            if (exist(hostConf)) {
+                continue;
+            }
+            TaskClient endpoint = clientFactory.createTaskClient(hostConf);
             boolean success = endpoint.start();
             endpoint.setInvalid(!success);
             pool.add(endpoint);
         }
     }
 
-    public static List<HostConf> getTaskHostConf(){
+    public static void add(List<HostConf> serverList) {
+        try {
+            hasInit.await();
+        } catch (InterruptedException e) {
+            // do nothing
+        }
+        internalAdd(serverList);
+    }
+
+    public static List<HostConf> getTaskHostConf() {
         List<HostConf> hostConfs = new ArrayList<HostConf>();
-        for(TaskClient taskServer : pool){
+        for (TaskClient taskServer : pool) {
             hostConfs.add(taskServer.getHostConf());
         }
         return hostConfs;
@@ -58,7 +97,7 @@ public class EndpointPool {
         if (CollectionUtils.isEmpty(serverList)) {
             LOG.error("serverList is empty");
         }
-        add(serverList);
+        internalAdd(serverList);
     }
 
     public static void stop() {
@@ -87,7 +126,7 @@ public class EndpointPool {
         Assert.isTrue(pool.size() > 0);
 
         int idx = retry;
-        if(first) {
+        if (first) {
             idx = index.addAndGet(1);
         }
         TaskClient endpoint = pool.get((Math.abs(idx) % pool.size()));

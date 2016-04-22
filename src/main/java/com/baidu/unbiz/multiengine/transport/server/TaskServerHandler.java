@@ -2,9 +2,8 @@ package com.baidu.unbiz.multiengine.transport.server;
 
 import org.slf4j.Logger;
 
-import com.baidu.unbiz.multiengine.endpoint.EndpointSupervisor;
+import com.baidu.unbiz.multiengine.endpoint.supervisor.DefaultEndpointSupervisor;
 import com.baidu.unbiz.multiengine.endpoint.gossip.GossipInfo;
-import com.baidu.unbiz.multiengine.endpoint.heartbeat.HeartbeatInfo;
 import com.baidu.unbiz.multiengine.task.TaskCommand;
 import com.baidu.unbiz.multiengine.transport.dto.Signal;
 import com.baidu.unbiz.multiengine.transport.dto.SignalType;
@@ -75,7 +74,7 @@ public class TaskServerHandler extends ContextAwareInboundHandler {
 
     private void handleGossipSync(ChannelHandlerContext ctx, Signal signal) {
         GossipInfo info = new GossipInfo();
-        info.setHostConfs(EndpointSupervisor.getTaskHostConf());
+        info.setHostConfs(DefaultEndpointSupervisor.getTaskHostConf());
         Signal<GossipInfo> ack = new Signal(info);
         ack.setType(SignalType.GOSSIC_ACK);
         ctx.writeAndFlush(ack);
@@ -84,7 +83,7 @@ public class TaskServerHandler extends ContextAwareInboundHandler {
 
     private void handleGossipReack(ChannelHandlerContext ctx, Signal<GossipInfo> signal) {
         GossipInfo remoteInfo = signal.getMessage();
-        EndpointSupervisor.mergeTaskServer(remoteInfo.getHostConfs());
+        DefaultEndpointSupervisor.mergeTaskServer(remoteInfo.getHostConfs());
         LOG.debug("gossip re-ack：" + signal);
 
 

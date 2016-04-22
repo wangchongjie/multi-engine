@@ -1,4 +1,4 @@
-package com.baidu.unbiz.multiengine.endpoint;
+package com.baidu.unbiz.multiengine.endpoint.supervisor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,6 +7,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 
+import com.baidu.unbiz.multiengine.endpoint.EndpointPool;
+import com.baidu.unbiz.multiengine.endpoint.HostConf;
 import com.baidu.unbiz.multiengine.endpoint.gossip.GossipSupport;
 import com.baidu.unbiz.multiengine.endpoint.heartbeat.HeartbeatSupport;
 import com.baidu.unbiz.multiengine.transport.client.TaskClient;
@@ -17,8 +19,8 @@ import com.baidu.unbiz.multitask.log.AopLogFactory;
 /**
  * Created by wangchongjie on 16/4/15.
  */
-public class EndpointSupervisor {
-    private static final Logger LOG = AopLogFactory.getLogger(EndpointSupervisor.class);
+public class DefaultEndpointSupervisor implements EndpointSupervisor {
+    private static final Logger LOG = AopLogFactory.getLogger(DefaultEndpointSupervisor.class);
 
     private static List<TaskServer> taskServers;
     private GossipSupport gossipSupport;
@@ -27,7 +29,7 @@ public class EndpointSupervisor {
     private String exportPort;
     private String serverHost;
 
-    public EndpointSupervisor() {
+    public DefaultEndpointSupervisor() {
         taskServers = new CopyOnWriteArrayList<TaskServer>();
         gossipSupport = new GossipSupport();
         heartbeatSupport = new HeartbeatSupport() {
@@ -42,7 +44,7 @@ public class EndpointSupervisor {
         List<HostConf> hostConfs = new ArrayList<HostConf>();
         // fixme
 //        for(TaskServer taskServer : taskServers){
-//            hostConfs.add(taskServer.getHostConf());
+//            hostConfs.internalAdd(taskServer.getHostConf());
 //        }
         hostConfs.addAll(EndpointPool.getTaskHostConf());
         return hostConfs;
@@ -55,6 +57,10 @@ public class EndpointSupervisor {
         return hostConfs;
     }
 
+    /**
+     * default: heartbeat and gossip
+     */
+    @Override
     public void init() {
         List<HostConf> exportHosts = HostConf.resolvePort(exportPort);
         for (HostConf hostConf : exportHosts) {
@@ -69,6 +75,7 @@ public class EndpointSupervisor {
         gossipSupport.scheduleGossip();
     }
 
+    @Override
     public void stop() {
         EndpointPool.stop();
         if (CollectionUtils.isEmpty(taskServers)) {

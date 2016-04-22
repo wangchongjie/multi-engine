@@ -7,7 +7,7 @@ import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.baidu.unbiz.multiengine.endpoint.EndpointSupervisor;
+import com.baidu.unbiz.multiengine.endpoint.supervisor.DefaultEndpointSupervisor;
 import com.baidu.unbiz.multiengine.utils.TestUtils;
 
 /**
@@ -17,7 +17,7 @@ import com.baidu.unbiz.multiengine.utils.TestUtils;
 @ContextConfiguration(locations = "/applicationContext-test2.xml")
 public class TestMultiProcess_Server3 {
 
-    private EndpointSupervisor supervisor = new EndpointSupervisor();
+    private DefaultEndpointSupervisor supervisor = new DefaultEndpointSupervisor();
 
     @Before
     public void init() {

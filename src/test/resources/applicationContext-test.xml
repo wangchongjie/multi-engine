@@ -13,7 +13,7 @@
 
     <context:component-scan base-package="com.baidu.unbiz"/>
 
-    <bean name="endpointSupervisor" class="com.baidu.unbiz.multiengine.endpoint.EndpointSupervisor"
+    <bean name="endpointSupervisor" class="com.baidu.unbiz.multiengine.endpoint.supervisor.DefaultEndpointSupervisor"
           init-method="init" destroy-method="stop">
         <property name="serverHost" value="127.0.0.1:8801;127.0.0.1:8802"/>
         <property name="exportPort" value="8801;8802"/>

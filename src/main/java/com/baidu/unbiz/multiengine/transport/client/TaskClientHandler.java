@@ -8,7 +8,7 @@ import java.util.List;
 
 import org.slf4j.Logger;
 
-import com.baidu.unbiz.multiengine.endpoint.EndpointSupervisor;
+import com.baidu.unbiz.multiengine.endpoint.supervisor.DefaultEndpointSupervisor;
 import com.baidu.unbiz.multiengine.endpoint.HostConf;
 import com.baidu.unbiz.multiengine.endpoint.gossip.GossipInfo;
 import com.baidu.unbiz.multiengine.transport.dto.Signal;
@@ -69,7 +69,7 @@ public class TaskClientHandler extends ChannelInboundHandlerAdapter {
 
     private void handleGossipAck(ChannelHandlerContext ctx, Signal<GossipInfo> signal) {
         GossipInfo diffInfo = new GossipInfo();
-        List<HostConf> locals = EndpointSupervisor.getTaskHostConf();
+        List<HostConf> locals = DefaultEndpointSupervisor.getTaskHostConf();
         GossipInfo remoteInfo = signal.getMessage();
 
         locals.removeAll(remoteInfo.getHostConfs());
@@ -79,7 +79,7 @@ public class TaskClientHandler extends ChannelInboundHandlerAdapter {
         reack.setType(SignalType.GOSSIP_REACK);
         ctx.writeAndFlush(reack);
 
-        EndpointSupervisor.mergeTaskServer(remoteInfo.getHostConfs());
+        DefaultEndpointSupervisor.mergeTaskServer(remoteInfo.getHostConfs());
         LOG.debug("gossip re-ack：" + signal);
     }
 

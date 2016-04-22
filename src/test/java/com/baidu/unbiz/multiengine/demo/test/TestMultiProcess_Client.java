@@ -14,7 +14,7 @@ import org.springframework.util.Assert;
 
 import com.baidu.unbiz.multiengine.utils.TestUtils;
 import com.baidu.unbiz.multiengine.common.DisTaskPair;
-import com.baidu.unbiz.multiengine.endpoint.EndpointSupervisor;
+import com.baidu.unbiz.multiengine.endpoint.supervisor.DefaultEndpointSupervisor;
 import com.baidu.unbiz.multiengine.vo.DeviceRequest;
 import com.baidu.unbiz.multiengine.vo.DeviceViewItem;
 import com.baidu.unbiz.multiengine.vo.QueryParam;
@@ -32,7 +32,7 @@ public class TestMultiProcess_Client {
     @Resource(name = "distributedParallelExePool")
     private ParallelExePool parallelExePool;
 
-    private EndpointSupervisor supervisor = new EndpointSupervisor();
+    private DefaultEndpointSupervisor supervisor = new DefaultEndpointSupervisor();
 
     @Before
     public void init() {
