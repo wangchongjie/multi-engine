@@ -44,8 +44,11 @@ public abstract class HeartbeatSupport {
     private void doHeartbeat() {
         List<TaskClient> pool = EndpointPool.getPool();
         for (TaskClient taskClient : pool) {
-            if(taskClient.isInvalid()) {
+            if (taskClient.isInvalid()) {
                 tryRestartEndpoint(taskClient);
+            }
+            if (!taskClient.initSuccess()) {
+                continue;
             }
             boolean isAlive = taskClient.heartBeat(HeartbeatInfo.Holder.instance);
             boolean invalid = taskClient.getInvalid().getAndSet(!isAlive);

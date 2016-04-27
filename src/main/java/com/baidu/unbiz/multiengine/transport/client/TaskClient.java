@@ -124,4 +124,8 @@ public final class TaskClient extends AbstractTaskClient {
     public void setInvalid(boolean invalid) {
         this.invalid.set(invalid);
     }
+
+    public boolean initSuccess() {
+        return initSuccess.get();
+    }
 }
