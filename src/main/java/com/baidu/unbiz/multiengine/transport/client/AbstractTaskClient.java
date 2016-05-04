@@ -161,9 +161,12 @@ public class AbstractTaskClient {
 
     private <T> T waitResponse(long seqId, long timeout, TimeUnit unit) throws TimeoutException, InterruptedException {
         SendFuture sendFutrue = TaskClientContext.getSessionResult(sessionKey, seqId);
-        T result = (T) sendFutrue.get(timeout, unit);
-        TaskClientContext.removeSessionResult(sessionKey, seqId);
-        return result;
+        try {
+            T result = (T) sendFutrue.get(timeout, unit);
+            return result;
+        } finally {
+            TaskClientContext.removeSessionResult(sessionKey, seqId);
+        }
     }
 
     public void callbackOnException(Exception e) {
