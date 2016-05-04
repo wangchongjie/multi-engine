@@ -61,7 +61,7 @@ public class DistributedParallelExePool extends SimpleParallelExePool {
             return context;
         }
         for (TaskPair taskPair : disTaskPairs) {
-            TaskCommand command = new TaskCommand(taskPair);
+            TaskCommand command = new TaskCommand(taskPair, policy);
             TaskClient taskClient = EndpointPool.selectEndpoint();
             LOG.debug("submit task to:" + taskClient.getHostConf());
             futures.put(taskPair.field1, taskClient.asyncCall(command));

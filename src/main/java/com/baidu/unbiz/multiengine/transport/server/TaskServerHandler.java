@@ -2,13 +2,15 @@ package com.baidu.unbiz.multiengine.transport.server;
 
 import org.slf4j.Logger;
 
-import com.baidu.unbiz.multiengine.endpoint.supervisor.DefaultEndpointSupervisor;
 import com.baidu.unbiz.multiengine.endpoint.gossip.GossipInfo;
+import com.baidu.unbiz.multiengine.endpoint.supervisor.DefaultEndpointSupervisor;
 import com.baidu.unbiz.multiengine.task.TaskCommand;
 import com.baidu.unbiz.multiengine.transport.dto.Signal;
 import com.baidu.unbiz.multiengine.transport.dto.SignalType;
 import com.baidu.unbiz.multitask.common.TaskPair;
 import com.baidu.unbiz.multitask.log.AopLogFactory;
+import com.baidu.unbiz.multitask.policy.DefautExecutePolicy;
+import com.baidu.unbiz.multitask.policy.ExecutePolicy;
 import com.baidu.unbiz.multitask.task.ParallelExePool;
 import com.baidu.unbiz.multitask.task.thread.MultiResult;
 
@@ -57,7 +59,8 @@ public class TaskServerHandler extends ContextAwareInboundHandler {
 
         // execute command
         ParallelExePool parallelExePool = bean("simpleParallelExePool");
-        MultiResult results = parallelExePool.submit(new TaskPair(command.getTaskBean(), command.getParams()));
+        ExecutePolicy policy = command.getPolicy() == null ? DefautExecutePolicy.instance() : command.getPolicy();
+        MultiResult results = parallelExePool.submit(policy, new TaskPair(command.getTaskBean(), command.getParams()));
 
         Object response = results.getResult(command.getTaskBean());
         Signal<Object> resultSignal = new Signal<Object>(response);
@@ -86,16 +89,15 @@ public class TaskServerHandler extends ContextAwareInboundHandler {
         DefaultEndpointSupervisor.mergeTaskServer(remoteInfo.getHostConfs());
         LOG.debug("gossip re-ack：" + signal);
 
-
     }
 
-//    @Override
-//    public void channelUnregistered(ChannelHandlerContext ctx)  throws Exception {
-//        Signal<HeartbeatInfo> signal = new Signal<HeartbeatInfo>();
-//        signal.setType(SignalType.SERVER_STOP);
-//        ctx.writeAndFlush(signal);
-//        super.channelUnregistered(ctx);
-//    }
+    //    @Override
+    //    public void channelUnregistered(ChannelHandlerContext ctx)  throws Exception {
+    //        Signal<HeartbeatInfo> signal = new Signal<HeartbeatInfo>();
+    //        signal.setType(SignalType.SERVER_STOP);
+    //        ctx.writeAndFlush(signal);
+    //        super.channelUnregistered(ctx);
+    //    }
 
     @Override
     public void channelReadComplete(ChannelHandlerContext ctx) {
