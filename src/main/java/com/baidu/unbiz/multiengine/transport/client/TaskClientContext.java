@@ -1,7 +1,9 @@
 package com.baidu.unbiz.multiengine.transport.client;
 
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.commons.collections.MapUtils;
 import org.slf4j.Logger;
 import org.springframework.util.Assert;
 import com.baidu.unbiz.multiengine.transport.dto.Signal;
@@ -22,6 +24,7 @@ public class TaskClientContext {
 
     private static ConcurrentHashMap<String, ConcurrentHashMap<Long, SendFuture>> sessionResultMap =
             new ConcurrentHashMap<String, ConcurrentHashMap<Long, SendFuture>>();
+    private static Long DEFAULT_RESULT_CAPACITY = 1000L;
 
     public static void placeSessionResult(String sessionKey, Long seqId, SendFuture futrue) {
         ConcurrentHashMap<Long, SendFuture> resultMap = sessionResultMap.get(sessionKey);
@@ -59,6 +62,33 @@ public class TaskClientContext {
         ConcurrentHashMap<Long, SendFuture> resultMap = sessionResultMap.get(sessionKey);
         Assert.notNull(resultMap);
         return resultMap.remove(seqId);
+    }
+
+    public static void lruCleanSessionResult() {
+        for (Map<Long, SendFuture> sessionMap : sessionResultMap.values()) {
+            if (MapUtils.isEmpty(sessionMap)) {
+                continue;
+            }
+            cleanSessionResult(sessionMap, DEFAULT_RESULT_CAPACITY);
+        }
+    }
+
+    private static void cleanSessionResult(Map<Long, SendFuture> resultMap, Long capacity) {
+        Long maxSeqId = 0L;
+        for (Long seqId : resultMap.keySet()) {
+            if (seqId > maxSeqId) {
+                maxSeqId = seqId;
+            }
+        }
+        Long minSeqId = maxSeqId - capacity;
+        if (minSeqId <= 0) {
+            return;
+        }
+        for (Long seqId : resultMap.keySet()) {
+            if (seqId < minSeqId) {
+                resultMap.remove(seqId);
+            }
+        }
     }
 
     public static SendFuture getSessionResult(String sessionKey, Long seqId) {
