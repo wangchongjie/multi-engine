@@ -23,7 +23,7 @@ public final class TaskClient extends AbstractTaskClient {
 
     private CountDownLatch initDone = new CountDownLatch(1);
     private AtomicBoolean initSuccess = new AtomicBoolean(true);
-    private AtomicBoolean invalid = new AtomicBoolean(false);
+    private TaskClientStatus status = new TaskClientStatus();
 
     public <T> T call(TaskCommand command) {
         return syncSend(command);
@@ -110,19 +110,19 @@ public final class TaskClient extends AbstractTaskClient {
     }
 
     public AtomicBoolean getInvalid() {
-        return invalid;
+        return status.getInvalid();
     }
 
     public boolean isInvalid() {
-        return invalid.get();
+        return status.getInvalid().get();
     }
 
     public void setInvalid(AtomicBoolean invalid) {
-        this.invalid = invalid;
+        this.status.setInvalid(invalid);
     }
 
     public void setInvalid(boolean invalid) {
-        this.invalid.set(invalid);
+        this.status.getInvalid().set(invalid);
     }
 
     public boolean initSuccess() {
