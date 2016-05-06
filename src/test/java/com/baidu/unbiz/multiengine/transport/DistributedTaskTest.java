@@ -227,12 +227,4 @@ public class DistributedTaskTest {
         taskServer.stop();
     }
 
-    private void dumySleep(long time) {
-        try {
-            Thread.sleep(time);
-        } catch (InterruptedException e) {
-            // do nothing
-        }
-    }
-
 }
