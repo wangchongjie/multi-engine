@@ -6,6 +6,7 @@ package com.baidu.unbiz.multiengine.endpoint.heartbeat;
 public class HeartbeatInfo {
     public final long DEFAULT_TIMEOUT = 5 * 1000L;
 
+    // server timeout ms
     private long timeout = DEFAULT_TIMEOUT;
 
     public HeartbeatInfo() {
