@@ -12,6 +12,7 @@ import com.baidu.unbiz.multiengine.endpoint.HostConf;
  */
 public class GossipInfo {
 
+    // TODO version and sys/net infos sync
     private long version;
     private List<HostConf> hostConfs;
 
