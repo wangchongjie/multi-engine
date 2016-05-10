@@ -21,6 +21,8 @@ import com.baidu.unbiz.multitask.task.SimpleParallelExePool;
 import com.baidu.unbiz.multitask.task.thread.TaskContext;
 
 /**
+ * 分布式并行执行资源池
+ *
  * Created by wangchongjie on 16/4/14.
  */
 @Component
