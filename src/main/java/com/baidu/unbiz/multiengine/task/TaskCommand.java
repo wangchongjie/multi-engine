@@ -8,6 +8,8 @@ import com.baidu.unbiz.multitask.policy.ExecutePolicy;
 import com.baidu.unbiz.multitask.task.Params;
 
 /**
+ * 任务命令，用于rpc任务提交
+ *
  * Created by wangchongjie on 16/4/5.
  */
 public class TaskCommand {
