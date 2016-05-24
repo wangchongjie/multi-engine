@@ -4,6 +4,8 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
 /**
+ * rpc消息封装
+ *
  * Created by wangchongjie on 16/4/13.
  */
 public class Signal<T> {
