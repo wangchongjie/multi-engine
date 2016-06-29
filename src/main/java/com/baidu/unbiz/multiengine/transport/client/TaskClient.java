@@ -26,7 +26,7 @@ public final class TaskClient extends AbstractTaskClient {
     private TaskClientStatus status = new TaskClientStatus();
 
     public <T> T call(TaskCommand command) {
-        return syncSend(command);
+        return (T) syncSend(command);
     }
 
     public SendFuture asyncCall(TaskCommand request) {

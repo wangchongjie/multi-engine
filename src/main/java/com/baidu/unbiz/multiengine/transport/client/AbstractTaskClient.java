@@ -104,7 +104,7 @@ public class AbstractTaskClient {
 
     protected <T> T syncSend(Object request) {
         try {
-            return syncSend(request, TaskConfig.TASK_TIMEOUT_MILL_SECONDS, TimeUnit.MILLISECONDS);
+            return (T) syncSend(request, TaskConfig.TASK_TIMEOUT_MILL_SECONDS, TimeUnit.MILLISECONDS);
         } catch (TimeoutException e) {
             throw new MultiEngineException(e);
         } catch (InterruptedException e) {
@@ -116,7 +116,7 @@ public class AbstractTaskClient {
             throws TimeoutException, InterruptedException {
         SendFuture future = asyncSend(request);
         if (future instanceof IdentitySendFuture) {
-            return waitResponse(((IdentitySendFuture) future).getId(), timeout, unit);
+            return (T) waitResponse(((IdentitySendFuture) future).getId(), timeout, unit);
         }
         throw new MultiEngineException("support IdentitySendFuture only");
     }
