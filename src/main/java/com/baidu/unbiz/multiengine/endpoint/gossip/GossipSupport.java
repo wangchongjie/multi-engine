@@ -18,8 +18,8 @@ public class GossipSupport {
 
     private static final Logger LOG = AopLogFactory.getLogger(GossipSupport.class);
 
-    protected static ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor
-            (new CustomizableThreadFactory("GossipScheduler"));
+    protected static ScheduledExecutorService scheduler =
+            Executors.newSingleThreadScheduledExecutor(new CustomizableThreadFactory("GossipScheduler"));
     protected static long heartbeatInterval = 3 * 1000;
 
     public void shutdownScheduler() {

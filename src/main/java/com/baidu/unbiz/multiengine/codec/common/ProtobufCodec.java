@@ -28,7 +28,8 @@ public class ProtobufCodec implements MsgCodec {
     /**
      * 方法缓存，用于Protobuf生成原生Java代码中的某些编解码方法。 缓存的方法包括:
      */
-    private static final AtomicComputeCache<String, Method> PROTOBUF_METHOD_CACHE = new AtomicComputeCache<String, Method>();
+    private static final AtomicComputeCache<String, Method> PROTOBUF_METHOD_CACHE =
+            new AtomicComputeCache<String, Method>();
 
 
     @Override

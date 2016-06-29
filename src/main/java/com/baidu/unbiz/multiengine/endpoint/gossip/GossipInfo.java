@@ -24,7 +24,7 @@ public class GossipInfo {
         this.hostConfs = hostConfs;
     }
 
-    public void GossipInfo() {
+    public GossipInfo() {
         version = System.currentTimeMillis();
     }
 

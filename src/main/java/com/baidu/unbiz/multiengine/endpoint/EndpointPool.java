@@ -37,7 +37,7 @@ public class EndpointPool {
 
     public static boolean exist(HostConf hostConf) {
         for (TaskClient taskClient : pool) {
-            if(taskClient.getHostConf().equals(hostConf)){
+            if (taskClient.getHostConf().equals(hostConf)) {
                 return true;
             }
         }
@@ -46,7 +46,7 @@ public class EndpointPool {
 
     public static TaskClient find(HostConf hostConf) {
         for (TaskClient taskClient : pool) {
-            if(taskClient.getHostConf().equals(hostConf)){
+            if (taskClient.getHostConf().equals(hostConf)) {
                 return taskClient;
             }
         }
@@ -56,7 +56,7 @@ public class EndpointPool {
     public static void beInvalid(List<HostConf> serverList) {
         for (HostConf hostConf : serverList) {
             TaskClient taskClient = find(hostConf);
-            if(taskClient == null) {
+            if (taskClient == null) {
                 continue;
             }
             taskClient.setInvalid(true);

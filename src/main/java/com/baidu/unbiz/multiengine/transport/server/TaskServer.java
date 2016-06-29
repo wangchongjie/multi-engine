@@ -5,9 +5,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.slf4j.Logger;
 
-import com.baidu.unbiz.multiengine.endpoint.heartbeat.HeartbeatInfo;
-import com.baidu.unbiz.multiengine.transport.dto.Signal;
-import com.baidu.unbiz.multiengine.transport.dto.SignalType;
 import com.baidu.unbiz.multitask.log.AopLogFactory;
 
 public final class TaskServer extends AbstractTaskServer {

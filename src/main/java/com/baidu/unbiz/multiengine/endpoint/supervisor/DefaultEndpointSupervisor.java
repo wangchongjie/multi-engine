@@ -40,7 +40,7 @@ public class DefaultEndpointSupervisor implements EndpointSupervisor {
         };
     }
 
-    public static List<HostConf> getTaskHostConf(){
+    public static List<HostConf> getTaskHostConf() {
         List<HostConf> hostConfs = new ArrayList<HostConf>();
         // fixme
 //        for(TaskServer taskServer : taskServers){
@@ -50,7 +50,7 @@ public class DefaultEndpointSupervisor implements EndpointSupervisor {
         return hostConfs;
     }
 
-    public static List<HostConf> mergeTaskServer(List<HostConf> otherHost){
+    public static List<HostConf> mergeTaskServer(List<HostConf> otherHost) {
         List<HostConf> hostConfs = getTaskHostConf();
         otherHost.removeAll(hostConfs);
         EndpointPool.add(otherHost);

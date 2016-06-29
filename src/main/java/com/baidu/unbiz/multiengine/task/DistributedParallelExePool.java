@@ -28,9 +28,9 @@ import com.baidu.unbiz.multitask.task.thread.TaskContext;
 @Component
 public class DistributedParallelExePool extends SimpleParallelExePool {
 
-    private final String DIS_TASK_PAIRS = "disTaskPairs";
-    private final String FUTURES = "futures";
-    private final long DIS_TASK_DEFAULT_TIMEOUT = 50 * 1000;
+    private static final String DIS_TASK_PAIRS = "disTaskPairs";
+    private static final String FUTURES = "futures";
+    private static final long DIS_TASK_DEFAULT_TIMEOUT = 50 * 1000;
 
     private void dispatchTaskPairs(List<TaskPair> localTaskPairs, List<TaskPair> disTaskPairs, TaskPair... taskPairs) {
         for (TaskPair taskPair : taskPairs) {
@@ -80,9 +80,9 @@ public class DistributedParallelExePool extends SimpleParallelExePool {
         for (Map.Entry<String, SendFuture> future : futures.entrySet()) {
             Object result;
             long timeout = policy.taskTimeout();
-             if (TaskConfig.NOT_LIMIT == timeout) {
-                 timeout = DIS_TASK_DEFAULT_TIMEOUT;
-             }
+            if (TaskConfig.NOT_LIMIT == timeout) {
+                timeout = DIS_TASK_DEFAULT_TIMEOUT;
+            }
             try {
                 result = future.getValue().get(timeout, TimeUnit.MILLISECONDS);
             } catch (Exception e) {

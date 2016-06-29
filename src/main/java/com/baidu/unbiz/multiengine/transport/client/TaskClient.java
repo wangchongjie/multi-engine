@@ -99,7 +99,8 @@ public final class TaskClient extends AbstractTaskClient {
         initDone.countDown();
     }
 
-    public TaskClient() {}
+    public TaskClient() {
+    }
 
     public TaskClient(HostConf hostConf) {
         this.hostConf = hostConf;

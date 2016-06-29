@@ -5,7 +5,6 @@ import org.apache.commons.lang.builder.ToStringStyle;
 
 import com.baidu.unbiz.multitask.common.TaskPair;
 import com.baidu.unbiz.multitask.policy.ExecutePolicy;
-import com.baidu.unbiz.multitask.task.Params;
 
 /**
  * 任务命令，用于rpc任务提交
@@ -20,7 +19,8 @@ public class TaskCommand {
 
     private ExecutePolicy policy;
 
-    public TaskCommand() {}
+    public TaskCommand() {
+    }
 
     public TaskCommand(TaskPair taskPair) {
         this.taskBean = taskPair.field1;

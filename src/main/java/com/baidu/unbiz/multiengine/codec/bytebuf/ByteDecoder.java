@@ -24,7 +24,7 @@ import io.netty.handler.codec.ReplayingDecoder;
  */
 public class ByteDecoder extends ReplayingDecoder<Object> {
 
-    protected final Logger LOG = AopLogFactory.getLogger(this.getClass());
+    protected static final Logger LOG = AopLogFactory.getLogger(ByteDecoder.class);
 
     private Class<?> headerClass;
 

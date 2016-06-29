@@ -16,7 +16,7 @@ import com.baidu.unbiz.multiengine.vo.DeviceViewItem;
 public class CodecTest {
 
     @Test
-    public void testProtostuffCodec(){
+    public void testProtostuffCodec() {
         MsgCodec codec = new ProtostuffCodec();
         List<DeviceViewItem> dataList = mockList();
         Signal params = new Signal(dataList);
@@ -29,7 +29,7 @@ public class CodecTest {
     }
 
     @Test
-    public void testJsonCodec(){
+    public void testJsonCodec() {
         MsgCodec codec = new JsonCodec();
         List<DeviceViewItem> dataList = mockList();
         Signal params = new Signal(dataList);

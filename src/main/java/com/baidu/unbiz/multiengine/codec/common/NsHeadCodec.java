@@ -1,9 +1,7 @@
 package com.baidu.unbiz.multiengine.codec.common;
 
 import com.baidu.unbiz.multiengine.codec.HeadCodec;
-import com.baidu.unbiz.multiengine.codec.MsgCodec;
 import com.baidu.unbiz.multiengine.exception.CodecException;
-import com.baidu.unbiz.multiengine.transport.protocol.MsgHead;
 import com.baidu.unbiz.multiengine.transport.protocol.NSHead;
 
 /**

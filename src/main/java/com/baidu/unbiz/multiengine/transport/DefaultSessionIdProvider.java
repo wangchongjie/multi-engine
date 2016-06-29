@@ -18,6 +18,15 @@ public class DefaultSessionIdProvider implements SessionIdProvider, Cloneable {
     public DefaultSessionIdProvider() {
     }
 
+    /**
+     * 构造方法
+     *
+     * @param prefix sessionid前缀
+     */
+    public DefaultSessionIdProvider(String prefix) {
+        this.prefix = prefix;
+    }
+
     public String getPrefix() {
         return prefix;
     }
@@ -26,14 +35,6 @@ public class DefaultSessionIdProvider implements SessionIdProvider, Cloneable {
         this.prefix = prefix;
     }
 
-    /**
-     * 构造方法
-     * 
-     * @param prefix sessionid前缀
-     */
-    public DefaultSessionIdProvider(String prefix) {
-        this.prefix = prefix;
-    }
 
     @Override
     public String getSessionId(boolean refresh) {

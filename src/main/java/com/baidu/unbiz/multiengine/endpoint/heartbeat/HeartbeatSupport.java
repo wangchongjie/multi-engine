@@ -19,8 +19,8 @@ public abstract class HeartbeatSupport {
 
     private static final Logger LOG = AopLogFactory.getLogger(HeartbeatSupport.class);
 
-    protected static ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor
-            (new CustomizableThreadFactory("EndpointSupervisorScheduler"));
+    protected static ScheduledExecutorService scheduler =
+            Executors.newSingleThreadScheduledExecutor(new CustomizableThreadFactory("EndpointSupervisorScheduler"));
     protected static long heartbeatInterval = 10 * 1000;
 
     public void shutdownScheduler() {
