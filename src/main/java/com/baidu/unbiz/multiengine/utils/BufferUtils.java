@@ -28,6 +28,13 @@ public abstract class BufferUtils {
         return array;
     }
 
+    /**
+     * 将ByteBuf转化成byte数组
+     *
+     * @param byteBuf Netty的ByteBuf @see ByteBuf
+     * @param length 长度
+     * @return byte数组
+     */
     public static byte[] bufToBytes(ByteBuf byteBuf, int length) {
         if (byteBuf == null) {
             return null;
