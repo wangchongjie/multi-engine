@@ -90,7 +90,6 @@ public class DistributedTaskTest {
         taskServer.stop();
     }
 
-
     @Test
     public void testRunDisTasksByBigResult() {
         HostConf hostConf = new HostConf();
@@ -226,5 +225,4 @@ public class DistributedTaskTest {
         taskClient2.stop();
         taskServer.stop();
     }
-
 }
