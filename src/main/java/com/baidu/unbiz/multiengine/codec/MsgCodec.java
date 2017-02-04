@@ -9,10 +9,8 @@ public interface MsgCodec {
     /**
      * 反序列化
      *
-     * @param clazz
-     *            反序列化后的类定义
-     * @param bytes
-     *            字节码
+     * @param clazz 反序列化后的类定义
+     * @param bytes 字节码
      * @return 反序列化后的对象
      * @throws CodecException
      */
@@ -21,8 +19,7 @@ public interface MsgCodec {
     /**
      * 序列化
      *
-     * @param object
-     *            待序列化的对象
+     * @param object 待序列化的对象
      * @return 字节码
      * @throws CodecException
      */

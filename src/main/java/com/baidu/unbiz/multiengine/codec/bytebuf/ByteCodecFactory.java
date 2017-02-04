@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015 Baidu, Inc. All Rights Reserved.
+ * Copyright (C) 2016 Baidu, Inc. All Rights Reserved.
  */
 package com.baidu.unbiz.multiengine.codec.bytebuf;
 

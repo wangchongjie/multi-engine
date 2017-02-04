@@ -8,6 +8,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
+import org.springframework.context.annotation.DependsOn;
 
 /**
  * Created by wangchongjie on 16/4/11.

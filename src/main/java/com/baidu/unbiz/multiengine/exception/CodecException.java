@@ -1,7 +1,7 @@
 package com.baidu.unbiz.multiengine.exception;
 
 /**
- * ClassName: CodecException <br/>
+ * ClassName: CodecException
  * Function: 编解码异常
  */
 public class CodecException extends RuntimeException {

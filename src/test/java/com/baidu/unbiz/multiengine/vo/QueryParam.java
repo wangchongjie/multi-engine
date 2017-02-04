@@ -10,7 +10,7 @@ import com.baidu.unbiz.multitask.task.TaskRequest;
  *
  * @author wangchongjie
  * @fileName QueryParam.java
- * @since 2014-11-13 下午5:52:36
+ * @since 2015-11-13 下午5:52:36
  */
 public class QueryParam extends EnableCast implements TaskRequest {
 

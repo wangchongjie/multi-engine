@@ -5,7 +5,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
 /**
- * bigpipe nshead 描述
+ * nshead 描述
  *
  * @author wangchongjie
  */

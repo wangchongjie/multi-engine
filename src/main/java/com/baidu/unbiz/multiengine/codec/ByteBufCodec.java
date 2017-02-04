@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015 Baidu, Inc. All Rights Reserved.
+ * Copyright (C) 2016 Baidu, Inc. All Rights Reserved.
  */
 package com.baidu.unbiz.multiengine.codec;
 
@@ -10,7 +10,7 @@ import io.netty.buffer.ByteBuf;
 /**
  * ByteBuf的编解码接口
  * 
- * @author <a href="mailto:xuchen06@baidu.com">xuc</a>
+ * @author wangchongjie
  * @version create on 2015-1-4 下午3:59:29
  */
 public interface ByteBufCodec {
